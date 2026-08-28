@@ -1,0 +1,4 @@
+URL: postgresql+psycopg2://postgres:Pankaj%4039@db.drrbbwountnrlrbkvdyp.supabase.co:5432/postgres?sslmode=require
+OperationalError (psycopg2.OperationalError) could not translate host name "db.drrbbwountnrlrbkvdyp.supabase.co" to address: Name or service not known
+
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

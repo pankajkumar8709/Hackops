@@ -1,0 +1,10 @@
+INFO:     127.0.0.1:58353 - "GET /health HTTP/1.1" 200 OK
+ INFO:     127.0.0.1:52521 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52521 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52521 - "POST /auth/organizer/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:52521 - "POST /participants/register HTTP/1.1" 422 Unprocessable Content
+ INFO:     127.0.0.1:58439 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58439 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58439 - "POST /auth/organizer/login HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:58439 - "POST /participants/register HTTP/1.1" 500 Internal Server Error
+  
