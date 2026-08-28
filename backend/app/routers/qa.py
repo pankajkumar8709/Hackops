@@ -1,17 +1,14 @@
-"""Q&A router — POST /qa and GET /tracks.
+"""Q&A router — POST /qa.
 
 Roadmap Phase 4:
   - POST /qa: embed incoming question -> similarity search top-k chunks ->
     LLM call with retrieved context -> return answer with citation.
-  - Track/problem-statement browser: simple GET /tracks list.
 """
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.models.event import Track
-from app.schemas.knowledge import QARequest, QAResponse, CitationOut, TrackOut
+from app.schemas.knowledge import QARequest, QAResponse, CitationOut
 from app.services.qa import ask
 
 router = APIRouter(tags=["knowledge"])
@@ -48,11 +45,3 @@ async def question_answer(
         issue_id=result.issue_id,
     )
 
-
-@router.get("/tracks", response_model=list[TrackOut])
-async def list_tracks(
-    db: AsyncSession = Depends(get_db),
-):
-    """Simple track/problem-statement browser — byproduct of ingested data."""
-    result = await db.execute(select(Track).order_by(Track.name))
-    return result.scalars().all()
