@@ -32,6 +32,10 @@ class MentorAllocation(Base):
     responded_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
+    timed_out_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    reoffer_count: Mapped[int] = mapped_column(nullable=False, default=0)
 
     mentor: Mapped["Mentor"] = relationship("Mentor", back_populates="allocations")
     issue: Mapped["Issue"] = relationship("Issue", back_populates="mentor_allocations")
