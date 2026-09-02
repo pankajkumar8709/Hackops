@@ -1,48 +1,29 @@
-INFO:     Started server process [21824]
+INFO:     Started server process [6360]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:58282 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /events HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /events HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "PATCH /events/cf0fee0d-815d-4aff-b05f-fba9fc3cc0c6 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /tracks HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "POST /tracks HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /tracks HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /submission-requirements HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "POST /submission-requirements HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /submission-requirements?track_id=68ff78e4-743b-4b85-94b2-8cc7c8ec1ea6 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /schedule-events HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /schedule-events?event_id=cf0fee0d-815d-4aff-b05f-fba9fc3cc0c6 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /documents HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /documents HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "DELETE /documents/70796745-db3a-4ece-98b1-fd7cd8548da8 HTTP/1.1" 204 No Content
-INFO:     127.0.0.1:58285 - "POST /mentors HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "POST /mentors HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /mentors HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "PATCH /mentors/2d828139-9661-4c97-9eef-8313deb9b8b9 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "POST /resources HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "POST /resources/bulk HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58285 - "GET /resources HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58285 - "GET /events HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:50639 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "POST /teams/16dd9e94-27ae-4dcd-92f9-788bd0dc7a23/join HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "GET /submissions/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "GET /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "PATCH /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "PATCH /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "GET /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "GET /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4/audit HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:50639 - "GET /submissions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "GET /submissions/e8fa4bbd-a5a1-441e-8d45-6bc56bcaa1b4/audit-organizer HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50639 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:50639 - "POST /submissions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:50639 - "GET /submissions/mine HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:59382 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55492 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55498 - "POST /issues HTTP/1.1" 201 Created
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:56755 - "POST /mentor-allocations HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56775 - "POST /mentor-allocations HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:56783 - "PATCH /mentor-allocations/7b96cab1-96c0-494e-a581-fe658b8ef834/accept HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56797 - "PATCH /mentor-allocations/7b96cab1-96c0-494e-a581-fe658b8ef834/accept HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:56805 - "POST /issues HTTP/1.1" 201 Created
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:56816 - "POST /mentor-allocations HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56830 - "PATCH /mentor-allocations/b1e01e8a-36f2-481c-b1bf-f617cddcead6/decline HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56842 - "GET /mentor-allocations/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56850 - "GET /mentor-allocations/mine?status=proposed HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /mentor-allocations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56863 - "GET /mentor-allocations/7b96cab1-96c0-494e-a581-fe658b8ef834 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56871 - "POST /mentor-allocations HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56883 - "POST /mentor-allocations HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:56889 - "GET /mentor-allocations HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56894 - "POST /mentor-allocations HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56898 - "POST /mentor-allocations/check-timeouts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56905 - "POST /issues HTTP/1.1" 201 Created
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:56915 - "POST /mentor-allocations HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56925 - "GET /mentor-allocations HTTP/1.1" 200 OK
