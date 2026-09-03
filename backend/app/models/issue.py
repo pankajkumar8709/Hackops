@@ -50,9 +50,14 @@ class Notification(Base):
     recipient_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("participants.id", ondelete="CASCADE"), nullable=False
     )
+    team_id: Mapped[Optional[uuid.UUID]] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("teams.id", ondelete="SET NULL"), nullable=True
+    )
     channel: Mapped[str] = mapped_column(String(50), nullable=False, default="in_app")
     content: Mapped[str] = mapped_column(Text, nullable=False)
     trigger_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reminder_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    read: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     recipient: Mapped["Participant"] = relationship("Participant", back_populates="notifications")
