@@ -2,13 +2,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
-from app.routers import auth, participants, teams, events, documents, mentors, resources, qa, submissions, issues, allocations, resource_requests, reminders
+from app.routers import auth, participants, teams, events, documents, mentors, resources, qa, submissions, issues, allocations, resource_requests, reminders, orchestrator
 
 settings = get_settings()
 
 app = FastAPI(
     title="Pulse — Hackathon Concierge API",
-    version="0.9.0",
+    version="1.0.0",
     description="Autonomous Hackathon Event Operations Agent",
 )
 
@@ -34,8 +34,9 @@ app.include_router(issues.router)
 app.include_router(allocations.router)
 app.include_router(resource_requests.router)
 app.include_router(reminders.router)
+app.include_router(orchestrator.router)
 
 
 @app.get("/health", tags=["System"])
 async def health_check():
-    return {"status": "ok", "service": "pulse-backend", "version": "0.9.0"}
+    return {"status": "ok", "service": "pulse-backend", "version": "1.0.0"}
