@@ -133,6 +133,77 @@ export function runSweep() {
 
 // ─── WebSocket ──────────────────────────────────────────
 
+// ─── Participant: Chat (Q&A) ────────────────────────────
+
+export function sendChatMessage(question, participantId, teamId) {
+  return request('/qa', {
+    method: 'POST',
+    body: JSON.stringify({
+      question,
+      participant_id: participantId || undefined,
+      team_id: teamId || undefined,
+    }),
+  });
+}
+
+// ─── Participant: Team Status ────────────────────────────
+
+export function fetchMyTeam() {
+  return request('/teams/mine');
+}
+
+export function fetchMySubmission() {
+  return request('/submissions/mine');
+}
+
+export function fetchMyIssues() {
+  return request('/issues/mine');
+}
+
+export function fetchMyResourceAllocations() {
+  return request('/resource-requests/mine');
+}
+
+export function fetchMyNotifications() {
+  return request('/notifications/mine');
+}
+
+export function markNotificationRead(notificationId) {
+  return request(`/notifications/${notificationId}/read`, { method: 'PATCH' });
+}
+
+// ─── Participant: Match Suggestions ──────────────────────
+
+export function fetchMatchSuggestions(teamId) {
+  return request(`/teams/${teamId}/match-suggestions`);
+}
+
+// ─── Participant: Profile ────────────────────────────────
+
+export function fetchMyProfile() {
+  return request('/participants/me');
+}
+
+// ─── Participant: Issue Creation ─────────────────────────
+
+export function reportIssue(data) {
+  return request('/issues', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+// ─── Participant: Resource Request ───────────────────────
+
+export function requestResource(resourceItemId) {
+  return request('/resource-requests', {
+    method: 'POST',
+    body: JSON.stringify({ resource_item_id: resourceItemId }),
+  });
+}
+
+// ─── WebSocket ──────────────────────────────────────────
+
 export function createDashboardWS(onMessage) {
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const host = window.location.host;
