@@ -64,3 +64,92 @@ INFO:     127.0.0.1:57317 - "GET /teams/33531ba8-4040-4cb3-8f27-8b16d24798ef/mat
 INFO:     127.0.0.1:57320 - "GET /submissions/mine HTTP/1.1" 404 Not Found
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:55851 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55851 - "GET /teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /escalations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /dashboard/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /orchestrator/actions?limit=5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "PATCH /escalations/637ea19e-7ad4-4bfc-a575-2764895c02fc/resolve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /dashboard/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55862 - "GET /orchestrator/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53012 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53015 - "GET /events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53018 - "GET /tracks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53020 - "GET /teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53022 - "GET /participants HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53024 - "GET /mentors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53026 - "GET /resource-pools HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:53030 - "GET /escalations HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:53034 - "GET /orchestrator/status HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:53037 - "GET /dashboard/health HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:61063 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:61076 - "GET /dashboard/export HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: The read operation timed out
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:59416 - "GET /orchestrator/actions?limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59420 - "GET /notifications/all?limit=10 HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
