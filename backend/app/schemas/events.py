@@ -22,6 +22,7 @@ class EventOut(BaseModel):
     name: str
     current_phase: str
     timezone: str
+    deadline_at: Optional[datetime] = None
     created_at: datetime
     class Config:
         from_attributes = True

@@ -1,75 +1,24 @@
-INFO:     Started server process [23264]
+INFO:     Started server process [15932]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:61779 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "POST /dashboard/broadcast HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "PATCH /dashboard/teams/d245166e-e0fd-4c61-b507-290bd2a3f494/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "PATCH /dashboard/submissions/976a0ea6-766f-4be1-8b51-9b112794a37a/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/export HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "PATCH /escalations/8afbe053-29ef-4759-9f18-48fcdd9aa00b/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /orchestrator/status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /orchestrator/actions?limit=5 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/health HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:61477 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61477 - "GET /dashboard/ws HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:61477 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53537 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "POST /dashboard/broadcast HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "PATCH /dashboard/teams/bbbe0df8-4074-44b6-9f8f-71599f14573e/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "PATCH /dashboard/submissions/97f61a2b-d9c8-4880-b48a-90dd049f7aaa/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/export HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "PATCH /escalations/e76950fa-2987-4973-a02b-4013ab83532b/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /orchestrator/status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /orchestrator/actions?limit=5 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/health HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:53545 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53545 - "GET /dashboard/ws HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:53545 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50184 - "GET /dashboard/ws HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:50190 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "POST /dashboard/broadcast HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "PATCH /dashboard/teams/d975c9ed-47cb-454a-a566-fc4122c6cb6a/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "PATCH /dashboard/submissions/b94624ae-13e4-4d26-99c9-3058306e6c36/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /dashboard/export HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "PATCH /escalations/17f7db11-6a85-4242-8471-7bfbfbade3e2/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /orchestrator/status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /orchestrator/actions?limit=5 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /dashboard/health HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:50190 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50190 - "GET /dashboard/ws HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:50190 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61079 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61081 - "POST /orchestrator/run HTTP/1.1" 200 OK
-LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
-INFO:     127.0.0.1:61084 - "POST /orchestrator/run HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61089 - "POST /orchestrator/run HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57805 - "GET /orchestrator/actions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61386 - "GET /orchestrator/actions?action_type=send_notification HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61388 - "GET /orchestrator/status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61406 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61408 - "GET /notifications/channels HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61411 - "POST /notifications/send HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61414 - "POST /notifications/send HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61418 - "POST /notifications/send HTTP/1.1" 201 Created
-INFO:     127.0.0.1:62193 - "POST /notifications/send HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51256 - "GET /notifications/pending HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51258 - "GET /notifications/pending?channel=discord HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51262 - "GET /notifications/pending?channel=in_app HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51265 - "PATCH /notifications/6bd31e7e-c0f4-4e80-a80d-0ffb279571b2/read HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51268 - "POST /orchestrator/run HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51272 - "GET /notifications/pending HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51275 - "POST /notifications/send HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:51278 - "POST /notifications/send HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51280 - "GET /notifications/pending HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:59484 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59487 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59489 - "GET /events HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59495 - "GET /tracks HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59498 - "GET /teams HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59500 - "GET /participants HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59503 - "GET /mentors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59505 - "GET /resource-pools HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59509 - "GET /escalations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59511 - "GET /orchestrator/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59516 - "GET /dashboard/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59519 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61590 - "GET /dashboard/export HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64782 - "GET /orchestrator/actions?limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49998 - "GET /notifications/all?limit=10 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50064 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50064 - "GET /teams HTTP/1.1" 200 OK
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
@@ -82,68 +31,36 @@ LLM skill classification failed, using keyword fallback: Expecting value: line 1
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: The read operation timed out
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:51624 - "POST /participants/register HTTP/1.1" 201 Created
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:51634 - "GET /participants/me HTTP/1.1" 200 OK
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
 LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
-INFO:     127.0.0.1:61390 - "POST /orchestrator/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62341 - "POST /orchestrator/run HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:62343 - "POST /orchestrator/run HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:62346 - "POST /orchestrator/run HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62349 - "POST /orchestrator/run HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:62351 - "POST /orchestrator/run HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62353 - "GET /orchestrator/actions?limit=200 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55113 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:55116 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51945 - "GET /participants/me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51948 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51952 - "GET /teams/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51954 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:60529 - "GET /submissions/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60532 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:60539 - "GET /issues/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62419 - "GET /notifications/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56140 - "GET /resource-requests/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53304 - "GET /teams/3852f004-d25e-4ee8-99cb-fa00014e5ffa/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58949 - "POST /qa HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58955 - "GET /teams/mine HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58957 - "GET /teams/mine HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:58960 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58963 - "GET /teams/3852f004-d25e-4ee8-99cb-fa00014e5ffa/match-suggestions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58966 - "GET /submissions/mine HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:58970 - "GET /teams HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58976 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58979 - "GET /participants/me HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58982 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58986 - "GET /teams/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58988 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58991 - "GET /submissions/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58994 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:58997 - "GET /issues/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59000 - "GET /notifications/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59002 - "GET /resource-requests/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59005 - "GET /teams/046ec19e-9ff8-4267-9230-ecd1f9318704/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59007 - "POST /qa HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59013 - "GET /teams/mine HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:59016 - "GET /teams/mine HTTP/1.1" 401 Unauthorized
-INFO:     127.0.0.1:59018 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:59022 - "GET /teams/046ec19e-9ff8-4267-9230-ecd1f9318704/match-suggestions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:59025 - "GET /submissions/mine HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:59032 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /dashboard/approval-queue HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "POST /dashboard/broadcast HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "PATCH /dashboard/teams/6fc1e217-85ff-4baf-8558-8ca882d8018c/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "PATCH /dashboard/submissions/70d62f9d-032d-4347-9225-947d0318ccae/override HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /dashboard/export HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "PATCH /escalations/126ee9d2-bb79-42e5-8758-93f7ddd6e797/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /orchestrator/status HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /orchestrator/actions?limit=5 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /dashboard/health HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:59032 - "GET /dashboard/health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59032 - "GET /dashboard/ws HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:59032 - "GET /dashboard/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51638 - "POST /teams HTTP/1.1" 201 Created
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:51644 - "GET /teams/mine HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:51648 - "POST /submissions HTTP/1.1" 201 Created
+INFO:     127.0.0.1:55862 - "GET /submissions/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55865 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57293 - "GET /issues/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57295 - "GET /notifications/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57298 - "GET /resource-requests/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57301 - "GET /teams/33531ba8-4040-4cb3-8f27-8b16d24798ef/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57305 - "POST /qa HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57310 - "GET /teams/mine HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:57312 - "GET /teams/mine HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:57315 - "POST /participants/register HTTP/1.1" 201 Created
+INFO:     127.0.0.1:57317 - "GET /teams/33531ba8-4040-4cb3-8f27-8b16d24798ef/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:57320 - "GET /submissions/mine HTTP/1.1" 404 Not Found
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
