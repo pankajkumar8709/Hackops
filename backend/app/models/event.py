@@ -21,6 +21,7 @@ class Event(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     current_phase: Mapped[str] = mapped_column(String(100), nullable=False, default="registration")
     timezone: Mapped[str] = mapped_column(String(100), nullable=False, default="UTC")
+    deadline_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     tracks: Mapped[list["Track"]] = relationship("Track", back_populates="event")
