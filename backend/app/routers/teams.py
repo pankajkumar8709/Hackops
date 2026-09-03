@@ -1,4 +1,4 @@
-"""Teams router — create, join, view."""
+"""Teams router — create, join, view, match suggestions."""
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,6 +9,8 @@ from app.auth import require_participant, require_organizer
 from app.models.participant import Participant
 from app.models.team import Team
 from app.schemas.auth import TeamCreate, TeamOut
+from app.schemas.matchmaking import MatchSuggestionsResponse
+from app.services.matchmaking import get_match_suggestions
 
 router = APIRouter(prefix="/teams", tags=["teams"])
 
@@ -90,6 +92,33 @@ async def list_teams(
     """Organizer-only: list all teams."""
     result = await db.execute(select(Team).order_by(Team.name))
     return result.scalars().all()
+
+
+@router.get("/{team_id}/match-suggestions", response_model=MatchSuggestionsResponse)
+async def match_suggestions(
+    team_id: uuid.UUID,
+    participant: Participant = Depends(require_participant),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Get ranked match suggestions for a team.
+
+    Participants can only view suggestions for their own team.
+    Returns candidates with skill gap analysis and reasoning.
+    """
+    # Row-level scoping: participants can only view their own team
+    if participant.team_id != team_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You can only view match suggestions for your own team.",
+        )
+
+    try:
+        result = await get_match_suggestions(db, team_id)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+
+    return result
 
 
 @router.get("/{team_id}", response_model=TeamOut)
