@@ -1,168 +1,57 @@
-INFO:     Started server process [19636]
+INFO:     Started server process [17716]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:59739 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60796 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56129 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56134 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54035 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54046 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54053 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54063 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53690 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53697 - "PATCH /notifications/47f95ba6-9849-4724-a725-5915685d42a0/read HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53705 - "GET /notifications?unread_only=true HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53711 - "GET /notifications?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53719 - "GET /reminders HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53724 - "GET /notifications/all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63187 - "GET /notifications/all?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63195 - "POST /reminders/sweep HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:51127 - "POST /reminders/sweep HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51132 - "GET /reminders HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51138 - "GET /notifications HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51142 - "PATCH /notifications/5a9ea161-ad99-47d8-86fd-640bc4d115b5/read HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51150 - "PATCH /notifications/7ad6c2b1-105d-478a-8c25-1456bef46b80/read HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:57711 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57720 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61169 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61174 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61182 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61193 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63084 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53740 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53749 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53757 - "PATCH /notifications/47a820c0-d16b-4302-ae68-b4141cef71c6/read HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49675 - "GET /notifications?unread_only=true HTTP/1.1" 200 OK
-INFO:     127.0.0.1:49686 - "GET /notifications?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63362 - "GET /reminders HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63367 - "GET /notifications/all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61757 - "GET /notifications/all?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61764 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61774 - "POST /reminders/sweep HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:61779 - "GET /reminders HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58880 - "GET /notifications HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58099 - "PATCH /notifications/103c62a3-ee21-4e3c-b026-d662b8869a15/read HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:58106 - "PATCH /notifications/f5fc1224-ef55-4bdf-8833-fdaf8e2e8bc3/read HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63906 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51699 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "POST /teams/1cd166dc-2fc2-422c-8171-faae46be582a/join HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "GET /submissions/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "GET /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "PATCH /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "PATCH /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "GET /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "GET /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0/audit HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51535 - "GET /submissions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "GET /submissions/9482e65b-efdf-4d0b-94ac-578af6a754c0/audit-organizer HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51535 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51535 - "POST /submissions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51535 - "GET /submissions/mine HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:51950 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "POST /teams/6305e358-0812-4c54-8b9e-65fd8df03d07/join HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "GET /submissions/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "GET /submissions/07b02478-f708-4d42-85ef-616e79cda201/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "PATCH /submissions/07b02478-f708-4d42-85ef-616e79cda201 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "PATCH /submissions/07b02478-f708-4d42-85ef-616e79cda201 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "GET /submissions/07b02478-f708-4d42-85ef-616e79cda201/audit HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "POST /participants/register HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "POST /teams HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "GET /submissions/07b02478-f708-4d42-85ef-616e79cda201/audit HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51950 - "GET /submissions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "GET /submissions/07b02478-f708-4d42-85ef-616e79cda201/audit-organizer HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51950 - "POST /submissions HTTP/1.1" 201 Created
-INFO:     127.0.0.1:51950 - "POST /submissions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51950 - "GET /submissions/mine HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:59725 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59730 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:59741 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:59752 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:62972 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:62982 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:62988 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:63003 - "POST /issues HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:54908 - "GET /issues/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54915 - "GET /issues/c17db96f-37e8-449d-ae24-997a61f44e2c HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54921 - "GET /issues/de322d9a-0072-4681-8b42-83fcfd0a5f1b HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54928 - "GET /escalations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54936 - "GET /escalations?status=open HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54943 - "PATCH /escalations/b05f9c76-29a9-43c5-8997-414232af44dc/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54954 - "GET /issues/6873e62a-222f-4f36-bc83-7818200938ca HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54961 - "PATCH /escalations/c99d37a4-5191-4536-b399-7f8262026256/resolve HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:54968 - "GET /escalations?status=open HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54975 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:54988 - "GET /escalations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:54997 - "GET /escalations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:55003 - "GET /escalations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:55007 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:49681 - "POST /issues?minutes_to_deadline=5 HTTP/1.1" 201 Created
-INFO:     127.0.0.1:63828 - "GET /escalations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63836 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63838 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61009 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61008 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61017 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61053 - "POST /issues HTTP/1.1" 201 Created
-LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
-INFO:     127.0.0.1:61067 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61079 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:61065 - "POST /mentor-allocations HTTP/1.1" 201 Created
-INFO:     127.0.0.1:61089 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:61095 - "POST /mentor-allocations HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:61105 - "POST /issues HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:61111 - "GET /issues/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61104 - "PATCH /mentor-allocations/932e9add-e5e0-47ba-aa50-cdf06e7c6d06/accept HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61120 - "GET /issues/f5e9374d-732b-45f3-b5b0-0f979c826593 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61135 - "GET /issues/f4083724-d1f7-4cfa-bcac-6746f94dada0 HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:61126 - "PATCH /mentor-allocations/932e9add-e5e0-47ba-aa50-cdf06e7c6d06/accept HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:49674 - "POST /issues HTTP/1.1" 201 Created
-LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
-INFO:     127.0.0.1:59055 - "POST /mentor-allocations HTTP/1.1" 201 Created
-INFO:     127.0.0.1:63935 - "PATCH /mentor-allocations/a408efda-9680-4ebb-ab24-53633493e765/decline HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62833 - "GET /mentor-allocations/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62840 - "GET /mentor-allocations/mine?status=proposed HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62849 - "GET /mentor-allocations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62857 - "GET /mentor-allocations/932e9add-e5e0-47ba-aa50-cdf06e7c6d06 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58099 - "POST /mentor-allocations HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:57187 - "POST /mentor-allocations HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:59568 - "GET /mentor-allocations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51322 - "POST /mentor-allocations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:49683 - "POST /mentor-allocations/check-timeouts HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52807 - "POST /issues HTTP/1.1" 201 Created
-LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
-INFO:     127.0.0.1:55666 - "POST /mentor-allocations HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:55803 - "GET /mentor-allocations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59947 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59951 - "POST /resources HTTP/1.1" 201 Created
-INFO:     127.0.0.1:62293 - "GET /resource-pools HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62301 - "POST /resource-requests HTTP/1.1" 201 Created
-INFO:     127.0.0.1:62315 - "GET /resource-pools HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62323 - "POST /resource-requests HTTP/1.1" 201 Created
-INFO:     127.0.0.1:53281 - "GET /resource-requests/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53291 - "GET /resource-requests/mine?status=allocated HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53298 - "GET /resource-requests/09e71166-0e1e-4894-9ee5-6611fc236f0b HTTP/1.1" 200 OK
-INFO:     127.0.0.1:53306 - "PATCH /resource-requests/09e71166-0e1e-4894-9ee5-6611fc236f0b/return HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52801 - "GET /resource-pools HTTP/1.1" 200 OK
-INFO:     127.0.0.1:52812 - "PATCH /resource-requests/09e71166-0e1e-4894-9ee5-6611fc236f0b/return HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:52818 - "POST /resource-requests HTTP/1.1" 201 Created
-INFO:     127.0.0.1:52827 - "POST /resource-requests HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:52835 - "POST /resource-requests HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:50795 - "POST /resource-requests HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:61573 - "GET /resource-pools HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:61579 - "POST /resource-requests HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:61583 - "GET /resource-requests HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61592 - "POST /resource-requests/check-overdue?threshold_hours=24 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:61599 - "GET /resource-pools HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59676 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62489 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57445 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:51630 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:51635 - "GET /teams/94122345-2ae6-4fdc-a6d7-b434ac597022/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:51650 - "GET /teams/fcce01cf-c9fd-48cd-901e-f807c340425a/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51665 - "GET /teams/3fdc8bd7-9aa2-44f0-84f8-dfaf1f25a95a/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51681 - "GET /teams/e87d3fd3-83ad-4b2d-9098-b00a0af8cd3d/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59926 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59930 - "GET /notifications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59939 - "POST /reminders/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59955 - "GET /notifications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50216 - "POST /reminders/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50235 - "GET /notifications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50243 - "GET /notifications HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50251 - "PATCH /notifications/6c929a5d-ce4b-420b-8577-fc970935b4a3/read HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50263 - "GET /notifications?unread_only=true HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63901 - "GET /notifications?reminder_type=deadline_reminder HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63910 - "GET /reminders HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63916 - "GET /notifications/all HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63924 - "GET /notifications/all?reminder_type=deadline_reminder HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63931 - "POST /reminders/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63943 - "POST /reminders/sweep HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63947 - "GET /reminders HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63952 - "GET /notifications HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63957 - "PATCH /notifications/e35224af-7836-4c49-a7a1-2f2b368c2ff1/read HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:63964 - "PATCH /notifications/4c52c7f0-3ec8-4889-b184-2469b045b270/read HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:63971 - "POST /reminders/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63981 - "POST /reminders/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60478 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60483 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:60494 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64672 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64683 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:64696 - "POST /issues HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:64704 - "POST /issues HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:64717 - "POST /issues HTTP/1.1" 409 Conflict
+INFO:     127.0.0.1:52912 - "GET /issues/mine HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57132 - "GET /issues/19e2bffc-ffe3-4092-a19d-9a9c2ecf1ddd HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58351 - "GET /issues/0c41d116-16fe-4dcc-9c19-7fa232c9b8d2 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56253 - "GET /escalations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56260 - "GET /escalations?status=open HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56269 - "PATCH /escalations/88494593-d312-4428-9f65-a41b7ad38e30/resolve HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56281 - "GET /issues/743b677c-9b47-46ee-b397-c0c9687a7414 HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56289 - "PATCH /escalations/80a4c8ad-7e23-40fc-a201-13b6ec2bc9d2/resolve HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:56296 - "GET /escalations?status=open HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56304 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:56316 - "GET /escalations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56323 - "GET /escalations HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:56328 - "GET /escalations HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:59928 - "POST /issues HTTP/1.1" 201 Created
+INFO:     127.0.0.1:59938 - "POST /issues?minutes_to_deadline=5 HTTP/1.1" 201 Created
+INFO:     127.0.0.1:65495 - "GET /escalations HTTP/1.1" 200 OK
