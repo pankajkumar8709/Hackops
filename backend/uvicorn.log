@@ -1,57 +1,85 @@
-INFO:     Started server process [17716]
+INFO:     Started server process [13536]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:59676 - "GET /health HTTP/1.1" 200 OK
-INFO:     127.0.0.1:62489 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57445 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51630 - "GET /teams/5638d089-cce3-4b7c-9e7e-223c21aa6c41/match-suggestions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51635 - "GET /teams/94122345-2ae6-4fdc-a6d7-b434ac597022/match-suggestions HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:51650 - "GET /teams/fcce01cf-c9fd-48cd-901e-f807c340425a/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51665 - "GET /teams/3fdc8bd7-9aa2-44f0-84f8-dfaf1f25a95a/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:51681 - "GET /teams/e87d3fd3-83ad-4b2d-9098-b00a0af8cd3d/match-suggestions HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59926 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59930 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59939 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59955 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50216 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50235 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50243 - "GET /notifications HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50251 - "PATCH /notifications/6c929a5d-ce4b-420b-8577-fc970935b4a3/read HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50263 - "GET /notifications?unread_only=true HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63901 - "GET /notifications?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63910 - "GET /reminders HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63916 - "GET /notifications/all HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63924 - "GET /notifications/all?reminder_type=deadline_reminder HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63931 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63943 - "POST /reminders/sweep HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:63947 - "GET /reminders HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:63952 - "GET /notifications HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:63957 - "PATCH /notifications/e35224af-7836-4c49-a7a1-2f2b368c2ff1/read HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:63964 - "PATCH /notifications/4c52c7f0-3ec8-4889-b184-2469b045b270/read HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:63971 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:63981 - "POST /reminders/sweep HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60478 - "POST /auth/organizer/login HTTP/1.1" 200 OK
-INFO:     127.0.0.1:60483 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:60494 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:64672 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:64683 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:64696 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:64704 - "POST /issues HTTP/1.1" 422 Unprocessable Content
-INFO:     127.0.0.1:64717 - "POST /issues HTTP/1.1" 409 Conflict
-INFO:     127.0.0.1:52912 - "GET /issues/mine HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57132 - "GET /issues/19e2bffc-ffe3-4092-a19d-9a9c2ecf1ddd HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58351 - "GET /issues/0c41d116-16fe-4dcc-9c19-7fa232c9b8d2 HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56253 - "GET /escalations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56260 - "GET /escalations?status=open HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56269 - "PATCH /escalations/88494593-d312-4428-9f65-a41b7ad38e30/resolve HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56281 - "GET /issues/743b677c-9b47-46ee-b397-c0c9687a7414 HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:56289 - "PATCH /escalations/80a4c8ad-7e23-40fc-a201-13b6ec2bc9d2/resolve HTTP/1.1" 404 Not Found
-INFO:     127.0.0.1:56296 - "GET /escalations?status=open HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56304 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:56316 - "GET /escalations HTTP/1.1" 200 OK
-INFO:     127.0.0.1:56323 - "GET /escalations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:56328 - "GET /escalations HTTP/1.1" 403 Forbidden
-INFO:     127.0.0.1:59928 - "POST /issues HTTP/1.1" 201 Created
-INFO:     127.0.0.1:59938 - "POST /issues?minutes_to_deadline=5 HTTP/1.1" 201 Created
-INFO:     127.0.0.1:65495 - "GET /escalations HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54620 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54644 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54648 - "POST /orchestrator/run HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:56876 - "POST /orchestrator/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56893 - "POST /orchestrator/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50070 - "GET /orchestrator/actions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50078 - "GET /orchestrator/actions?action_type=send_notification HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50084 - "GET /orchestrator/status HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54480 - "POST /auth/organizer/login HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54485 - "POST /orchestrator/run HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54503 - "POST /orchestrator/run HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54527 - "POST /orchestrator/run HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54540 - "GET /orchestrator/actions HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54548 - "GET /orchestrator/actions?action_type=send_notification HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54556 - "GET /orchestrator/status HTTP/1.1" 200 OK
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+LLM skill classification failed, using keyword fallback: Expecting value: line 1 column 1 (char 0)
+INFO:     127.0.0.1:54566 - "POST /orchestrator/sweep HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61222 - "POST /orchestrator/run HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:61226 - "POST /orchestrator/run HTTP/1.1" 422 Unprocessable Content
+INFO:     127.0.0.1:61231 - "POST /orchestrator/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61239 - "POST /orchestrator/run HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:61243 - "POST /orchestrator/run HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61257 - "GET /orchestrator/actions?limit=200 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53939 - "GET /teams/cbd461ad-d679-4291-95e5-0fbf32590fb7/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53949 - "GET /teams/cbd461ad-d679-4291-95e5-0fbf32590fb7/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:53957 - "GET /teams/cbd461ad-d679-4291-95e5-0fbf32590fb7/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:53961 - "GET /teams/bac4e7dc-c2bc-4ae4-9ab0-b56e94d9827b/match-suggestions HTTP/1.1" 403 Forbidden
+INFO:     127.0.0.1:58972 - "GET /teams/8ac7d1ad-3bae-44a6-89a5-8662b5717fcb/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58988 - "GET /teams/8432daab-5bd4-4cce-8262-368df9dcf5c4/match-suggestions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59003 - "GET /teams/4d12c1a0-546a-42ff-8a24-1cf7aac0e176/match-suggestions HTTP/1.1" 200 OK
