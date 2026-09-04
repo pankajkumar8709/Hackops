@@ -29,6 +29,16 @@ export default function OrganizerLoginPage() {
 
   return (
     <div className="auth-layout">
+      <div className="auth-shell">
+        <aside className="auth-showcase">
+          <div className="auth-showcase-brand"><span className="auth-showcase-mark">H</span> HackOps</div>
+          <div className="auth-showcase-copy">
+            <div className="auth-showcase-eyebrow">Organizer console</div>
+            <h2 className="auth-showcase-title">The event room, beautifully organized.</h2>
+            <p className="auth-showcase-description">See the pulse of your hackathon, unblock teams early, and make every participant feel looked after.</p>
+          </div>
+          <div className="auth-showcase-note"><span className="auth-showcase-note-dot" /> Everything in its right place</div>
+        </aside>
       <div className="auth-card">
         <div className="auth-logo">
           <div className="sidebar-logo-icon">H</div>
@@ -92,6 +102,7 @@ export default function OrganizerLoginPage() {
           <br />
           <Link to="/" className="mt-2" style={{ display: 'inline-block' }}>← Back to Home</Link>
         </div>
+      </div>
       </div>
     </div>
   );

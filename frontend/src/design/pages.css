@@ -1,5 +1,6 @@
 /* ═══════════════════════════════════════════════════════════
-   HackOps Page-Specific Styles
+   HackOps Pulse — Page-Specific Styles
+   Each section: one visual identity, one rhythm.
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Dashboard Page ──────────────────────────────────────── */
@@ -33,9 +34,16 @@
   display: flex;
   gap: var(--sp-3);
   padding: var(--sp-3);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.66);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.feed-item:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .feed-item-icon {
@@ -51,7 +59,7 @@
 
 .feed-item-icon.action { background: var(--info-muted); color: var(--info); }
 .feed-item-icon.escalation { background: var(--error-muted); color: var(--error); }
-.feed-item-icon.notification { background: var(--primary-muted); color: var(--primary); }
+.feed-item-icon.notification { background: var(--accent-muted); color: var(--accent); }
 .feed-item-icon.success { background: var(--success-muted); color: var(--success); }
 
 .feed-item-body {
@@ -74,6 +82,7 @@
 }
 
 .feed-item-time {
+  font-family: var(--font-mono);
   font-size: var(--text-xs);
   color: var(--text-muted);
   white-space: nowrap;
@@ -100,10 +109,18 @@
 }
 
 .resource-card {
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--sp-4);
+  box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.resource-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .resource-card-header {
@@ -127,9 +144,11 @@
 }
 
 .resource-qty-available {
+  font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: var(--weight-bold);
   color: var(--success);
+  font-variant-numeric: tabular-nums;
 }
 
 .resource-qty-sep {
@@ -138,6 +157,7 @@
 }
 
 .resource-qty-total {
+  font-family: var(--font-display);
   font-size: var(--text-md);
   color: var(--text-muted);
 }
@@ -169,7 +189,8 @@
   flex-direction: column;
   gap: var(--sp-3);
   padding: var(--sp-4);
-  background: var(--bg-surface);
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
 }
@@ -197,13 +218,14 @@
 }
 
 .chat-msg-bot .chat-msg-bubble {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.92);
   color: var(--text-primary);
 }
 
 .chat-msg-user .chat-msg-bubble {
-  background: var(--primary);
-  color: white;
+  background: linear-gradient(135deg, var(--accent), #f49350);
+  color: var(--accent-text);
+  font-weight: var(--weight-medium);
 }
 
 .chat-msg-meta {
@@ -221,15 +243,16 @@
   padding: var(--sp-2) var(--sp-3);
   background: var(--bg-base);
   border-radius: var(--radius-md);
-  border-left: 3px solid var(--primary);
+  border-left: 3px solid var(--accent);
 }
 
 .chat-citation-label {
+  font-family: var(--font-display);
   font-size: var(--text-xs);
   color: var(--text-muted);
   font-weight: var(--weight-semibold);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
   margin-bottom: var(--sp-1);
 }
 
@@ -286,7 +309,7 @@
 }
 
 .team-info-value a {
-  color: var(--primary);
+  color: var(--accent);
 }
 
 /* ── Issue List ──────────────────────────────────────────── */
@@ -301,14 +324,16 @@
   align-items: flex-start;
   gap: var(--sp-3);
   padding: var(--sp-4);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.68);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .issue-item:hover {
   border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .issue-severity {
@@ -318,9 +343,9 @@
   flex-shrink: 0;
 }
 
-.issue-severity.high { background: var(--error); }
-.issue-severity.medium { background: var(--warning); }
-.issue-severity.low { background: var(--success); }
+.issue-severity.high { background: var(--urgency-high); }
+.issue-severity.medium { background: var(--urgency-medium); }
+.issue-severity.low { background: var(--urgency-low); }
 
 .issue-body {
   flex: 1;
@@ -352,10 +377,10 @@
   display: flex;
   gap: var(--sp-4);
   padding: var(--sp-4);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  border-left: 3px solid var(--error);
+  border-left: 3px solid var(--urgency-high);
 }
 
 .escalation-urgency {
@@ -367,15 +392,18 @@
 }
 
 .escalation-urgency-value {
+  font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
+  font-variant-numeric: tabular-nums;
 }
 
 .escalation-urgency-label {
+  font-family: var(--font-display);
   font-size: var(--text-xs);
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
 }
 
 .escalation-body {
@@ -386,9 +414,16 @@
 /* ── Agent Action Card ───────────────────────────────────── */
 .action-card {
   padding: var(--sp-4);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.action-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .action-card-header {
@@ -399,6 +434,7 @@
 }
 
 .action-card-type {
+  font-family: var(--font-display);
   font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--text-primary);
@@ -460,9 +496,16 @@
   display: flex;
   gap: var(--sp-4);
   padding: var(--sp-4);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.7);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.match-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .match-score {
@@ -477,9 +520,11 @@
 }
 
 .match-score-value {
+  font-family: var(--font-display);
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
   color: var(--success);
+  font-variant-numeric: tabular-nums;
 }
 
 .match-score-label {
@@ -518,23 +563,24 @@
   align-items: flex-start;
   gap: var(--sp-3);
   padding: var(--sp-3) var(--sp-4);
-  background: var(--bg-base);
+  background: rgba(255, 255, 255, 0.66);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 }
 
 .notification-item:hover {
-  background: var(--bg-elevated);
+  background: rgba(255, 255, 255, 0.94);
+  border-color: var(--border-default);
 }
 
 .notification-item.unread {
-  border-left: 3px solid var(--primary);
+  border-left: 3px solid var(--accent);
 }
 
 .notification-item.read {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 /* ── Skeletons ───────────────────────────────────────────── */
