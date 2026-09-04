@@ -1,50 +1,73 @@
 /* ═══════════════════════════════════════════════════════════
-   HackOps Design Tokens
+   HackOps Pulse — Design Tokens
+   Bright editorial workspace with a warm product feel.
    ═══════════════════════════════════════════════════════════ */
 
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
 :root {
-  /* ── Colors: Background ─────────────────────────────────── */
-  --bg-base: #09090b;
-  --bg-surface: #18181b;
-  --bg-elevated: #27272a;
-  --bg-overlay: rgba(0, 0, 0, 0.6);
-  --bg-hover: #3f3f46;
-  --bg-active: #52525b;
+  /* ── Colors: Base ───────────────────────────────────────── */
+  --bg-base: #fffaf2;
+  --bg-surface: rgba(255, 255, 255, 0.78);
+  --bg-elevated: #ffffff;
+  --bg-overlay: rgba(128, 92, 44, 0.18);
+  --bg-hover: #fff3df;
+  --bg-active: #ffe7bc;
+
+  /* ── Colors: Surface accents ─────────────────────────────── */
+  --bg-surface-alt: #fff6ea;
+  --bg-glow: rgba(250, 118, 74, 0.08);
+  --bg-urgency-glow: rgba(242, 144, 77, 0.10);
 
   /* ── Colors: Border ─────────────────────────────────────── */
-  --border-subtle: #27272a;
-  --border-default: #3f3f46;
-  --border-strong: #52525b;
-  --border-focus: var(--primary);
+  --border-subtle: rgba(151, 104, 37, 0.10);
+  --border-default: rgba(151, 104, 37, 0.18);
+  --border-strong: rgba(151, 104, 37, 0.28);
+  --border-focus: var(--accent);
 
   /* ── Colors: Text ───────────────────────────────────────── */
-  --text-primary: #fafafa;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-disabled: #52525b;
+  --text-primary: #2f241a;
+  --text-secondary: #685645;
+  --text-muted: #927d69;
+  --text-disabled: #c0ae9e;
 
-  /* ── Colors: Brand ──────────────────────────────────────── */
-  --primary: #6366f1;
-  --primary-hover: #818cf8;
-  --primary-muted: rgba(99, 102, 241, 0.15);
-  --primary-text: #ffffff;
+  /* ── Colors: Accent ─────────────────────────────────────── */
+  --accent: #f06b45;
+  --accent-hover: #dc5a34;
+  --accent-muted: rgba(240, 107, 69, 0.12);
+  --accent-text: #fff9f2;
+  --accent-dim: rgba(240, 107, 69, 0.24);
+
+  /* ── Colors: Brand (legacy alias) ───────────────────────── */
+  --primary: var(--accent);
+  --primary-hover: var(--accent-hover);
+  --primary-muted: var(--accent-muted);
+  --primary-text: var(--accent-text);
+
+  /* ── Colors: Urgency Scale ──────────────────────────────── */
+  --urgency-low: #d59d21;
+  --urgency-medium: #ec8757;
+  --urgency-high: #d54f45;
+  --urgency-low-muted: rgba(213, 157, 33, 0.14);
+  --urgency-medium-muted: rgba(236, 135, 87, 0.14);
+  --urgency-high-muted: rgba(213, 79, 69, 0.14);
 
   /* ── Colors: Semantic ───────────────────────────────────── */
-  --success: #22c55e;
-  --success-muted: rgba(34, 197, 94, 0.15);
-  --success-text: #ffffff;
+  --success: #3f9f74;
+  --success-muted: rgba(63, 159, 116, 0.12);
+  --success-text: #fefcf8;
 
-  --warning: #f59e0b;
-  --warning-muted: rgba(245, 158, 11, 0.15);
-  --warning-text: #000000;
+  --warning: #d89a25;
+  --warning-muted: rgba(216, 154, 37, 0.14);
+  --warning-text: #3b2b0b;
 
-  --error: #ef4444;
-  --error-muted: rgba(239, 68, 68, 0.15);
-  --error-text: #ffffff;
+  --error: #cf5145;
+  --error-muted: rgba(207, 81, 69, 0.12);
+  --error-text: #fffaf7;
 
-  --info: #3b82f6;
-  --info-muted: rgba(59, 130, 246, 0.15);
-  --info-text: #ffffff;
+  --info: #4f8bc8;
+  --info-muted: rgba(79, 139, 200, 0.12);
+  --info-text: #fbfdff;
 
   /* ── Spacing Scale (4px base) ───────────────────────────── */
   --sp-0: 0;
@@ -59,20 +82,22 @@
   --sp-12: 48px;
   --sp-16: 64px;
 
-  /* ── Typography Scale ───────────────────────────────────── */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
-  --text-xs: 12px;
-  --text-sm: 13px;
+  --text-xs: 11px;
+  --text-sm: 12.5px;
   --text-base: 14px;
   --text-md: 15px;
-  --text-lg: 16px;
-  --text-xl: 18px;
-  --text-2xl: 24px;
-  --text-3xl: 30px;
+  --text-lg: 17px;
+  --text-xl: 20px;
+  --text-2xl: 26px;
+  --text-3xl: 34px;
+  --text-4xl: 44px;
 
-  --leading-tight: 1.25;
+  --leading-tight: 1.2;
   --leading-normal: 1.5;
   --leading-relaxed: 1.65;
 
@@ -82,27 +107,37 @@
   --weight-bold: 700;
 
   /* ── Radius ─────────────────────────────────────────────── */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
 
   /* ── Shadows ────────────────────────────────────────────── */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
-  --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 10px 24px rgba(178, 131, 76, 0.08);
+  --shadow-md: 0 18px 42px rgba(178, 131, 76, 0.12);
+  --shadow-lg: 0 26px 60px rgba(178, 131, 76, 0.16);
+  --shadow-xl: 0 40px 80px rgba(178, 131, 76, 0.18);
+  --shadow-glow: 0 24px 60px rgba(240, 107, 69, 0.18);
+  --shadow-glow-sm: 0 12px 30px rgba(240, 107, 69, 0.12);
 
   /* ── Transitions ────────────────────────────────────────── */
-  --transition-fast: 120ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
+  --transition-fast: 100ms ease;
+  --transition-base: 180ms ease;
+  --transition-slow: 280ms ease;
+  --transition-spring: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
   /* ── Layout ─────────────────────────────────────────────── */
-  --sidebar-width: 240px;
+  --sidebar-width: 272px;
   --sidebar-collapsed: 60px;
-  --topbar-height: 56px;
-  --content-max-width: 1400px;
+  --topbar-height: 72px;
+  --content-max-width: 1480px;
+
+  /* ── Z-index ────────────────────────────────────────────── */
+  --z-sidebar: 100;
+  --z-topbar: 90;
+  --z-overlay: 200;
+  --z-modal: 300;
+  --z-toast: 400;
 }

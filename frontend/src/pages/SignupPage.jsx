@@ -53,7 +53,17 @@ export default function SignupPage() {
 
   return (
     <div className="auth-layout">
-      <div className="auth-card" style={{ maxWidth: '500px' }}>
+      <div className="auth-shell">
+        <aside className="auth-showcase">
+          <div className="auth-showcase-brand"><span className="auth-showcase-mark">H</span> HackOps</div>
+          <div className="auth-showcase-copy">
+            <div className="auth-showcase-eyebrow">Participant space</div>
+            <h2 className="auth-showcase-title">Your next great build starts here.</h2>
+            <p className="auth-showcase-description">Set up your profile once, then focus on the people and projects that make the weekend memorable.</p>
+          </div>
+          <div className="auth-showcase-note"><span className="auth-showcase-note-dot" /> Made for curious builders</div>
+        </aside>
+      <div className="auth-card auth-card-signup">
         <div className="auth-logo">
           <div className="sidebar-logo-icon">H</div>
           <span className="auth-logo-text">HackOps</span>
@@ -178,8 +188,8 @@ export default function SignupPage() {
           <Link to="/" className="mt-2" style={{ display: 'inline-block' }}>← Back to Home</Link>
         </div>
       </div>
+      </div>
     </div>
   );
 }
-
 

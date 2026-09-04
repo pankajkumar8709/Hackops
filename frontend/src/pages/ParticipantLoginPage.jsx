@@ -28,6 +28,16 @@ export default function ParticipantLoginPage() {
 
   return (
     <div className="auth-layout">
+      <div className="auth-shell">
+        <aside className="auth-showcase">
+          <div className="auth-showcase-brand"><span className="auth-showcase-mark">H</span> HackOps</div>
+          <div className="auth-showcase-copy">
+            <div className="auth-showcase-eyebrow">Participant space</div>
+            <h2 className="auth-showcase-title">Bring your best idea to life.</h2>
+            <p className="auth-showcase-description">Find your team, stay in sync with mentors, and keep every deadline in view from one friendly workspace.</p>
+          </div>
+          <div className="auth-showcase-note"><span className="auth-showcase-note-dot" /> Your hackathon, in motion</div>
+        </aside>
       <div className="auth-card">
         <div className="auth-logo">
           <div className="sidebar-logo-icon">H</div>
@@ -88,6 +98,7 @@ export default function ParticipantLoginPage() {
           <br />
           <Link to="/" className="mt-2" style={{ display: 'inline-block' }}>← Back to Home</Link>
         </div>
+      </div>
       </div>
     </div>
   );
