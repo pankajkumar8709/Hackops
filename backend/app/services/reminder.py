@@ -121,7 +121,7 @@ def _draft_llm_enhanced_message(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {api_key}"},
                 json={
-                    "model": "llama-3.1-8b-instant",
+                    "model": "allam-2-7b",
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100,
                 },
@@ -326,6 +326,8 @@ async def _send_team_notifications(
     reminder_type: str,
 ) -> int:
     """Create a Notification for every member of the team. Returns count sent."""
+    from app.services.notification_delivery import send_notification
+
     result = await db.execute(
         select(Participant).where(Participant.team_id == team_id)
     )
@@ -333,19 +335,16 @@ async def _send_team_notifications(
 
     count = 0
     for member in members:
-        notification = Notification(
+        await send_notification(
+            db=db,
             recipient_id=member.id,
-            team_id=team_id,
-            channel="in_app",
             content=message,
+            channel="auto",
+            team_id=team_id,
             trigger_reason=trigger_reason,
             reminder_type=reminder_type,
         )
-        db.add(notification)
         count += 1
-
-    if count > 0:
-        await db.flush()
 
     return count
 

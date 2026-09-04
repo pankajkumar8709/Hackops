@@ -1,10 +1,12 @@
 """JWT + token utilities for Phase 2 auth."""
-import secrets
 import hashlib
+import hmac
+import secrets
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
 from jose import JWTError, jwt
+from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,10 +18,32 @@ from app.database import get_db
 settings = get_settings()
 bearer_scheme = HTTPBearer()
 
-# ─── Organizer credentials (hardcoded for hackathon scope)
-# In production this would be a DB table with hashed passwords.
-ORGANIZER_USERNAME = "organizer"
-ORGANIZER_PASSWORD = "pulse_admin_2026"
+# ─── Password hashing (bcrypt) ──────────────────────────
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# ─── Organizer credentials (env-driven, never hardcoded)
+# Read from settings (which loads ORGANIZER_USERNAME / ORGANIZER_PASSWORD
+# from .env). If unset, a random password is generated once at import and
+# logged so the operator can see it — no real-looking credential is ever
+# committed to source.
+import logging as _logging
+import secrets as _secrets
+
+_org_logger = _logging.getLogger(__name__)
+
+_settings = get_settings()
+
+ORGANIZER_USERNAME = _settings.organizer_username or "organizer"
+ORGANIZER_PASSWORD = _settings.organizer_password
+if not ORGANIZER_PASSWORD:
+    ORGANIZER_PASSWORD = _secrets.token_urlsafe(16)
+    _org_logger.warning(
+        "ORGANIZER_PASSWORD not set in .env — generated one-time password: %s",
+        ORGANIZER_PASSWORD,
+    )
+
+# Hash the organizer password at import time for constant-time comparison
+ORGANIZER_PASSWORD_HASH = pwd_context.hash(ORGANIZER_PASSWORD)
 
 
 # ─── JWT ──────────────────────────────────────────────────
@@ -51,6 +75,27 @@ def generate_participant_token() -> tuple[str, str]:
 
 def hash_token(plain: str) -> str:
     return hashlib.sha256(plain.encode()).hexdigest()
+
+
+def verify_token_hash(plain: str, stored_hash: str) -> bool:
+    """Constant-time comparison of token hash to prevent timing attacks."""
+    computed = hashlib.sha256(plain.encode()).hexdigest()
+    return hmac.compare_digest(computed, stored_hash)
+
+
+def verify_organizer_password(plain: str) -> bool:
+    """Verify organizer password against bcrypt hash (constant-time)."""
+    return pwd_context.verify(plain, ORGANIZER_PASSWORD_HASH)
+
+
+def hash_password(plain: str) -> str:
+    """Hash a plain-text password with bcrypt."""
+    return pwd_context.hash(plain)
+
+
+def verify_password(plain: str, hashed: str) -> bool:
+    """Verify a plain-text password against a bcrypt hash."""
+    return pwd_context.verify(plain, hashed)
 
 
 # ─── FastAPI dependencies ─────────────────────────────────
@@ -86,3 +131,41 @@ async def require_participant(
     if not participant:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Participant not found")
     return participant
+
+
+async def require_any_role(
+    token: str = Depends(_extract_bearer),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Accepts a valid organizer OR participant JWT and returns the payload.
+
+    Used by endpoints shared between the participant UI and the
+    organizer-authenticated Discord bot (e.g. POST /qa).
+    """
+    payload = decode_jwt(token)
+    if payload.get("role") not in ("organizer", "participant"):
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
+    return payload
+
+
+async def require_organizer_ws(websocket, token: str):
+    """Validate an organizer JWT supplied as a WebSocket query parameter.
+
+    Browsers cannot set headers on a WebSocket handshake, so the dashboard
+    client passes ?token=<jwt>. Raises WebSocketDisconnect on failure.
+    """
+    from fastapi import WebSocketDisconnect
+
+    if not token:
+        await websocket.close(code=4401, reason="Missing token")
+        raise WebSocketDisconnect(code=4401)
+    try:
+        payload = decode_jwt(token)
+    except HTTPException:
+        await websocket.close(code=4401, reason="Invalid token")
+        raise WebSocketDisconnect(code=4401)
+    if payload.get("role") != "organizer":
+        await websocket.close(code=4403, reason="Organizer access required")
+        raise WebSocketDisconnect(code=4403)
+    return payload

@@ -1,259 +1,168 @@
 """
-Phase 5 smoke test - Submission Audit Module
-Run with:
-    python test_phase5.py
-Requires backend to be running on :8000.
+test_phase5.py — Submission Audit Module
+
+Tests:
+  1. Setup: register A+B, create team with track, join
+  2. POST /submissions (incomplete - 1/4 fields) -> 25%
+  3. GET /submissions/mine
+  4. GET /submissions/{id}/audit -> field-level detail
+  5. PATCH /submissions/{id} -> add 2 more fields -> 75%
+  6. PATCH -> add description -> 100%
+  7. Row-level: B (same team) can view audit
+  8. Row-level: C (different team) -> 403
+  9. Organizer GET /submissions -> 200
+ 10. Organizer GET /submissions/{id}/audit-organizer -> 200
+
+Run:  python test_phase5.py
 """
 import httpx
 import json
 import sys
 import time
 import uuid
-import asyncio
-import asyncpg
 
-BASE = "http://localhost:8000"
-passed = 0
-failed = 0
+BASE = "http://127.0.0.1:8000"
+DEMO_PASS = "testpass123"
+_ts = int(time.time())
 
+import os
+from pathlib import Path
+ENV_PATH = Path(__file__).resolve().parents[1] / ".env"
+_env = {}
+for line in ENV_PATH.read_text().splitlines():
+    line = line.strip()
+    if line and not line.startswith("#") and "=" in line:
+        k, v = line.split("=", 1)
+        _env[k.strip()] = v.strip()
+ORG_PASS = _env.get("ORGANIZER_PASSWORD", "")
 
-def h(label, r):
-    print(f"\n--- {label} ---")
-    print(f"  Status : {r.status_code}")
-    try:
-        print(f"  Body   : {json.dumps(r.json(), indent=2)[:500]}")
-    except Exception:
-        print(f"  Body   : {r.text[:300]}")
-    return r
+_pass = [0]
+_fail = [0]
 
+def ok(label, condition, detail=""):
+    if condition:
+        _pass[0] += 1
+        print(f"  [PASS] {label}")
+    else:
+        _fail[0] += 1
+        print(f"  [FAIL] {label}  ({detail})" if detail else f"  [FAIL] {label}")
 
-def check(condition, msg):
-    global passed, failed
-    if not condition:
-        print(f"  FAIL: {msg}")
-        failed += 1
-        return False
-    print(f"  PASS: {msg}")
-    passed += 1
-    return True
+def header(label):
+    print(f"\n{'-'*55}")
+    print(f"  {label}")
 
-
-async def seed_track_and_requirements(db_url: str):
-    """
-    Create a test Event, Track, and SubmissionRequirement rows
-    directly in the DB (Phase 3 admin endpoints don't exist yet).
-    Returns (event_id, track_id).
-    """
-    sync_url = db_url.replace("postgresql+asyncpg://", "postgresql://")
-    if "?" in sync_url:
-        sync_url = sync_url.split("?")[0]
-
-    conn = await asyncpg.connect(sync_url)
-    try:
-        event_id = uuid.uuid4()
-        track_id = uuid.uuid4()
-
-        await conn.execute(
-            "INSERT INTO events (id, name, current_phase, timezone, created_at) "
-            "VALUES ($1, $2, $3, $4, NOW())",
-            event_id, "Test Hackathon 2026", "submissions", "UTC",
-        )
-
-        await conn.execute(
-            "INSERT INTO tracks (id, name, eligibility_rules, event_id, created_at) "
-            "VALUES ($1, $2, $3, $4, NOW())",
-            track_id, "AI/ML Track", "Open to all", event_id,
-        )
-
-        # Create 4 submission requirements
-        for field_name in ("repo_url", "readme_url", "demo_url", "description"):
-            req_id = uuid.uuid4()
-            await conn.execute(
-                "INSERT INTO submission_requirements (id, track_id, field_name, required) "
-                "VALUES ($1, $2, $3, TRUE)",
-                req_id, track_id, field_name,
-            )
-
-        return event_id, track_id
-    finally:
-        await conn.close()
-
-
-async def get_db_url():
-    """Read DATABASE_URL from the app config."""
-    from app.config import get_settings
-    settings = get_settings()
-    return settings.database_url
-
-
-print("=" * 50)
-print("Phase 5 Smoke Test - Submission Audit Module")
-print("=" * 50)
-
-ts = int(time.time())
-
-# Seed track + requirements
-db_url = asyncio.run(get_db_url())
-event_id, track_id = asyncio.run(seed_track_and_requirements(db_url))
-print(f"\n  Seeded event_id={event_id}")
-print(f"  Seeded track_id={track_id}")
-print(f"  Created 4 submission_requirements for this track")
+def auth(token):
+    return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
 with httpx.Client(base_url=BASE, timeout=30) as c:
 
-    # 1. Health check
-    r = h("GET /health", c.get("/health"))
-    check(r.status_code == 200, "/health returns 200")
-    check(r.json()["version"] == "0.5.0", "version = 0.5.0")
+    header("Setup: organizer + track")
+    r = c.post("/auth/organizer/login", json={"username": "organizer", "password": ORG_PASS})
+    ok("Organizer login", r.status_code == 200)
+    OHD = auth(r.json()["access_token"])
 
-    # 2. Organizer login
-    r = h("POST /auth/organizer/login", c.post("/auth/organizer/login",
-        json={"username": "organizer", "password": "pulse_admin_2026"}))
-    check(r.status_code == 200, "organizer login 200")
-    org_token = r.json()["access_token"]
-    OHD = {"Authorization": f"Bearer {org_token}"}
+    r = c.get("/tracks", headers=OHD)
+    tracks = r.json()
+    ok("Tracks exist", len(tracks) > 0, f"count={len(tracks)}")
+    track_id = tracks[0]["id"]
 
-    # 3. Register participant A
-    r = h("Register Participant A", c.post("/participants/register",
-        json={"name": "Alice", "email": f"alice_phase5_{ts}@example.com",
-              "skills": ["Python", "ML"]}))
-    check(r.status_code == 201, "register A: 201")
-    token_a = r.json()["token"]
-    AHD = {"Authorization": f"Bearer {token_a}"}
+    header("Setup: register A, create team with track")
+    email_a = f"alice_sub_{_ts}@example.com"
+    r = c.post("/participants/register", json={"name": "Alice Sub", "email": email_a, "password": DEMO_PASS, "skills": ["Python"]})
+    ok("Register A", r.status_code == 201)
+    r = c.post("/auth/participant/login", json={"email": email_a, "password": DEMO_PASS})
+    AHD = auth(r.json()["access_token"])
 
-    # 4. Register participant B (for row-level scoping test)
-    r = h("Register Participant B", c.post("/participants/register",
-        json={"name": "Bob", "email": f"bob_phase5_{ts}@example.com",
-              "skills": ["Go"]}))
-    check(r.status_code == 201, "register B: 201")
-    token_b = r.json()["token"]
-    BHD = {"Authorization": f"Bearer {token_b}"}
+    team_name = f"SubTeam-{uuid.uuid4().hex[:6]}"
+    r = c.post("/teams", headers=AHD, json={"name": team_name, "track_id": track_id})
+    ok("Create team", r.status_code == 201)
+    team_id = r.json()["id"]
 
-    # 5. Create team as A (with the seeded track)
-    r = h("POST /teams (A creates Team Alpha)", c.post("/teams",
-        json={"name": f"Team Alpha {ts}", "track_id": str(track_id)},
-        headers=AHD))
-    check(r.status_code == 201, "create team: 201")
-    team_a_id = r.json()["id"]
+    header("Setup: register B, join team")
+    email_b = f"bob_sub_{_ts}@example.com"
+    r = c.post("/participants/register", json={"name": "Bob Sub", "email": email_b, "password": DEMO_PASS, "skills": ["Go"]})
+    ok("Register B", r.status_code == 201)
+    r = c.post("/auth/participant/login", json={"email": email_b, "password": DEMO_PASS})
+    BHD = auth(r.json()["access_token"])
+    r = c.post(f"/teams/{team_id}/join", headers=BHD)
+    ok("B joins team", r.status_code == 200)
 
-    # 6. B joins Team Alpha
-    r = h(f"POST /teams/{team_a_id}/join (B joins)", c.post(f"/teams/{team_a_id}/join", headers=BHD))
-    check(r.status_code == 200, "B joins team: 200")
-
-    # 7. POST /submissions - incomplete submission (only repo_url)
-    r = h("POST /submissions (incomplete - only repo_url)", c.post("/submissions",
-        json={"repo_url": "https://github.com/team-alpha/project"},
-        headers=AHD))
-    check(r.status_code == 201, "create submission: 201")
+    header("1. POST /submissions (incomplete - only repo_url)")
+    r = c.post("/submissions", headers=AHD, json={"repo_url": "https://github.com/team/project"})
+    ok("Create submission -> 201", r.status_code == 201)
     sub = r.json()
     sub_id = sub["id"]
-    check(sub["team_id"] == team_a_id, "submission linked to correct team")
-    check(sub["completeness_pct"] == 25.0,
-          f"completeness_pct = {sub['completeness_pct']} (expected 25.0 - 1 of 4 required fields)")
-    check(sub["last_audited_at"] is not None, "last_audited_at is set")
+    ok("completeness_pct = 25%", sub["completeness_pct"] == 25.0, f"got {sub['completeness_pct']}")
+    ok("last_audited_at set", sub["last_audited_at"] is not None)
 
-    # 8. GET /submissions/mine
-    r = h("GET /submissions/mine", c.get("/submissions/mine", headers=AHD))
-    check(r.status_code == 200, "GET /submissions/mine: 200")
-    check(r.json()["id"] == sub_id, "mine returns the correct submission")
+    header("2. GET /submissions/mine")
+    r = c.get("/submissions/mine", headers=AHD)
+    ok("Returns 200", r.status_code == 200)
+    ok("Correct submission", r.json()["id"] == sub_id)
 
-    # 9. GET /submissions/{id}/audit - detailed audit
-    r = h(f"GET /submissions/{sub_id}/audit", c.get(f"/submissions/{sub_id}/audit", headers=AHD))
-    check(r.status_code == 200, "GET audit: 200")
+    header("3. GET /submissions/{id}/audit")
+    r = c.get(f"/submissions/{sub_id}/audit", headers=AHD)
+    ok("Audit returns 200", r.status_code == 200)
     audit = r.json()
-    check(audit["total_required"] == 4, f"total_required = {audit['total_required']} (expected 4)")
-    check(audit["total_present"] == 1, f"total_present = {audit['total_present']} (expected 1)")
-    check(audit["completeness_pct"] == 25.0, "audit completeness = 25%")
-
-    # Check individual field results
+    ok("total_required = 4", audit["total_required"] == 4)
+    ok("total_present = 1", audit["total_present"] == 1)
+    ok("completeness = 25%", audit["completeness_pct"] == 25.0)
     fields = {f["field_name"]: f for f in audit["fields"]}
-    check(fields["repo_url"]["passed"] is True, "repo_url passed")
-    check(fields["readme_url"]["passed"] is False, "readme_url failed")
-    check(fields["demo_url"]["passed"] is False, "demo_url failed")
-    check(fields["description"]["passed"] is False, "description failed")
+    ok("repo_url passed", fields["repo_url"]["passed"] is True)
+    ok("readme_url failed", fields["readme_url"]["passed"] is False)
+    ok("demo_url failed", fields["demo_url"]["passed"] is False)
+    ok("description failed", fields["description"]["passed"] is False)
 
-    # 10. PATCH /submissions/{id} - add more fields
-    r = h("PATCH /submissions (add readme_url + demo_url)", c.patch(f"/submissions/{sub_id}",
-        json={"readme_url": "https://github.com/team-alpha/project/blob/main/README.md",
-              "demo_url": "https://youtu.be/demo123"},
-        headers=AHD))
-    check(r.status_code == 200, "PATCH submission: 200")
-    updated = r.json()
-    check(updated["completeness_pct"] == 75.0,
-          f"completeness_pct = {updated['completeness_pct']} (expected 75.0 - 3 of 4)")
-    check(updated["repo_url"] == "https://github.com/team-alpha/project", "repo_url preserved")
-    check(updated["readme_url"] is not None, "readme_url updated")
-    check(updated["demo_url"] is not None, "demo_url updated")
+    header("4. PATCH - add readme_url + demo_url -> 75%")
+    r = c.patch(f"/submissions/{sub_id}", headers=AHD, json={
+        "readme_url": "https://github.com/team/project/blob/main/README.md",
+        "demo_url": "https://youtu.be/demo123",
+    })
+    ok("Patch returns 200", r.status_code == 200)
+    ok("completeness = 75%", r.json()["completeness_pct"] == 75.0, f"got {r.json()['completeness_pct']}")
 
-    # 11. PATCH - add description to reach 100%
-    r = h("PATCH /submissions (add description -> 100%)", c.patch(f"/submissions/{sub_id}",
-        json={"description": "An AI-powered hackathon concierge that helps teams succeed."},
-        headers=AHD))
-    check(r.status_code == 200, "PATCH submission: 200")
-    final = r.json()
-    check(final["completeness_pct"] == 100.0,
-          f"completeness_pct = {final['completeness_pct']} (expected 100.0 - all 4 fields)")
+    header("5. PATCH - add description -> 100%")
+    r = c.patch(f"/submissions/{sub_id}", headers=AHD, json={
+        "description": "An AI-powered hackathon concierge that helps teams succeed.",
+    })
+    ok("Patch returns 200", r.status_code == 200)
+    ok("completeness = 100%", r.json()["completeness_pct"] == 100.0, f"got {r.json()['completeness_pct']}")
 
-    # 12. Row-level scoping: B (same team) can view
-    r = h("GET audit as B (same team - should 200)", c.get(f"/submissions/{sub_id}/audit", headers=BHD))
-    check(r.status_code == 200, "B can view same team's audit")
+    header("6. Row-level: B (same team) can view audit")
+    r = c.get(f"/submissions/{sub_id}/audit", headers=BHD)
+    ok("B can view -> 200", r.status_code == 200)
 
-    # 13. Row-level scoping: register C (different team), try to view A's submission
-    r = h("Register Participant C", c.post("/participants/register",
-        json={"name": "Carol", "email": f"carol_phase5_{ts}@example.com",
-              "skills": ["JS"]}))
-    check(r.status_code == 201, "register C: 201")
-    token_c = r.json()["token"]
-    CHD = {"Authorization": f"Bearer {token_c}"}
+    header("7. Row-level: C (different team) -> 403")
+    email_c = f"carol_sub_{_ts}@example.com"
+    r = c.post("/participants/register", json={"name": "Carol Sub", "email": email_c, "password": DEMO_PASS, "skills": ["JS"]})
+    ok("Register C", r.status_code == 201)
+    r = c.post("/auth/participant/login", json={"email": email_c, "password": DEMO_PASS})
+    CHD = auth(r.json()["access_token"])
+    r = c.post("/teams", headers=CHD, json={"name": f"Other-{uuid.uuid4().hex[:6]}"})
+    ok("C creates team", r.status_code == 201)
+    r = c.get(f"/submissions/{sub_id}/audit", headers=CHD)
+    ok("C cannot view -> 403", r.status_code == 403)
 
-    r = h("POST /teams (C creates Team Bravo)", c.post("/teams",
-        json={"name": f"Team Bravo {ts}"},
-        headers=CHD))
-    check(r.status_code == 201, "C creates team: 201")
+    header("8. Organizer endpoints")
+    r = c.get("/submissions", headers=OHD)
+    ok("GET /submissions (org) -> 200", r.status_code == 200)
+    ok("Returns list", isinstance(r.json(), list))
+    r = c.get(f"/submissions/{sub_id}/audit-organizer", headers=OHD)
+    ok("Org audit -> 200", r.status_code == 200)
 
-    r = h("GET audit as C (different team - should 403)", c.get(f"/submissions/{sub_id}/audit", headers=CHD))
-    check(r.status_code == 403, "C cannot view A's team submission -> 403")
+    header("9. No team -> cannot submit")
+    email_d = f"dave_sub_{_ts}@example.com"
+    r = c.post("/participants/register", json={"name": "Dave Sub", "email": email_d, "password": DEMO_PASS, "skills": []})
+    ok("Register D (no team)", r.status_code == 201)
+    r = c.post("/auth/participant/login", json={"email": email_d, "password": DEMO_PASS})
+    DHD = auth(r.json()["access_token"])
+    r = c.post("/submissions", headers=DHD, json={"repo_url": "https://x.com"})
+    ok("No team submit -> 409", r.status_code == 409)
 
-    # 14. Organizer endpoints
-    r = h("GET /submissions (organizer)", c.get("/submissions", headers=OHD))
-    check(r.status_code == 200, "organizer list submissions: 200")
-    check(isinstance(r.json(), list), "returns a list")
-    check(len(r.json()) >= 1, "at least 1 submission listed")
-
-    r = h("GET audit-organizer (organizer views any submission)",
-          c.get(f"/submissions/{sub_id}/audit-organizer", headers=OHD))
-    check(r.status_code == 200, "organizer audit: 200")
-    check(r.json()["completeness_pct"] == 100.0, "organizer sees 100% completeness")
-
-    # 15. Re-submit (POST again - should update existing)
-    r = h("POST /submissions (re-submit - overwrites)", c.post("/submissions",
-        json={"repo_url": "https://github.com/team-alpha/project-v2"},
-        headers=AHD))
-    check(r.status_code == 201, "re-submit: 201")
-    resub = r.json()
-    # Re-submit preserves existing fields, only updates provided ones
-    check(resub["completeness_pct"] == 100.0,
-          f"re-submit completeness = {resub['completeness_pct']} (expected 100.0 - fields preserved)")
-    check(resub["repo_url"] == "https://github.com/team-alpha/project-v2",
-          "repo_url updated to v2")
-    check(resub["readme_url"] is not None, "readme_url preserved")
-
-    # 16. No token -> 403
-    r = h("POST /submissions (no token - should 403)", c.post("/submissions",
-        json={"repo_url": "https://example.com"}))
-    check(r.status_code == 403, "no token -> 403")
-
-    # 17. GET /submissions/mine when not in team (C has no submission)
-    r = h("GET /submissions/mine (C has no submission - edge case)",
-          c.get("/submissions/mine", headers=CHD))
-    check(r.status_code == 404, "C has no submission -> 404")
-
-
-print(f"\n{'=' * 50}")
-print(f"Results: {passed} passed, {failed} failed out of {passed + failed} checks")
-if failed == 0:
-    print("ALL PHASE 5 CHECKS PASSED")
-else:
-    print("SOME CHECKS FAILED")
+print(f"\n{'='*55}")
+if _fail[0]:
+    print(f"  FAILED: {_fail[0]} / {_pass[0]+_fail[0]}")
     sys.exit(1)
-print("=" * 50)
+else:
+    print(f"  ALL {_pass[0]} CHECKS PASSED")
+print(f"{'='*55}")

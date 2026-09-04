@@ -48,6 +48,7 @@ class PendingNotificationOut(BaseModel):
     trigger_reason: Optional[str] = None
     reminder_type: Optional[str] = None
     read: bool = False
+    delivery_status: str = "pending"  # delivered | pending (external channels)
     sent_at: datetime
 
     # Recipient info for delivery

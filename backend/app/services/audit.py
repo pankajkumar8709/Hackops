@@ -32,6 +32,20 @@ def _is_present(value) -> bool:
     return True
 
 
+def _sync_team_readiness(team: Team, completeness_pct: float) -> None:
+    """Keep the team's readiness_pct in lockstep with the audit result.
+
+    The dashboard's "team readiness %" is driven by this value — without
+    this write-back the number would be disconnected from the audit that
+    produces it."""
+    team.readiness_pct = round(completeness_pct, 1)
+    if completeness_pct >= 100.0 and team.submission_status in (
+        "not_submitted",
+        "in_progress",
+    ):
+        team.submission_status = "submitted"
+
+
 async def run_audit(
     submission: Submission,
     db: AsyncSession,
@@ -44,6 +58,7 @@ async def run_audit(
     3. For each required field, check if the submission has it filled.
     4. Compute completeness_pct = (passed required fields) / (total required fields) * 100.
     5. Update submission.completeness_pct and last_audited_at.
+    6. Write completeness back to Team.readiness_pct (+ promote status at 100%).
     """
     # Load team to get track_id
     result = await db.execute(select(Team).where(Team.id == submission.team_id))
@@ -52,6 +67,8 @@ async def run_audit(
         # No track assigned — no requirements, mark 0%
         submission.completeness_pct = 0.0
         submission.last_audited_at = datetime.now(timezone.utc)
+        if team:
+            _sync_team_readiness(team, 0.0)
         return AuditResult(
             submission_id=submission.id,
             team_id=submission.team_id,
@@ -73,6 +90,7 @@ async def run_audit(
     if not requirements:
         submission.completeness_pct = 100.0
         submission.last_audited_at = datetime.now(timezone.utc)
+        _sync_team_readiness(team, 100.0)
         return AuditResult(
             submission_id=submission.id,
             team_id=submission.team_id,
@@ -123,6 +141,9 @@ async def run_audit(
     # Persist audit results
     submission.completeness_pct = completeness_pct
     submission.last_audited_at = datetime.now(timezone.utc)
+
+    # Write readiness back to the team record
+    _sync_team_readiness(team, completeness_pct)
 
     return AuditResult(
         submission_id=submission.id,

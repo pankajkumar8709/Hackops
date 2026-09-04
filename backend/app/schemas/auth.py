@@ -12,12 +12,14 @@ from pydantic import BaseModel, EmailStr
 class ParticipantRegister(BaseModel):
     name: str
     email: EmailStr
+    password: str
     skills: list[str] = []
     track_pref: Optional[str] = None
     discord_handle: Optional[str] = None
 
 
 class ParticipantOut(BaseModel):
+    """Registration response — no token returned."""
     id: uuid.UUID
     name: str
     email: str
@@ -26,10 +28,15 @@ class ParticipantOut(BaseModel):
     discord_handle: Optional[str]
     role: str
     team_id: Optional[uuid.UUID]
-    token: str  # plain token returned once at registration
 
     class Config:
         from_attributes = True
+
+
+class ParticipantLogin(BaseModel):
+    """Participant login: registered email + password."""
+    email: EmailStr
+    password: str
 
 
 class ParticipantPublic(BaseModel):
@@ -80,3 +87,10 @@ class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
     role: str
+
+
+class ParticipantTokenResponse(TokenResponse):
+    """Login response for a participant — carries their profile id too."""
+    participant_id: uuid.UUID
+    name: str
+    email: str

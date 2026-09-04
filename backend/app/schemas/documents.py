@@ -10,7 +10,10 @@ class DocumentOut(BaseModel):
     id: uuid.UUID
     filename: str
     type: str
+    ingestion_status: str = "processing"
+    chunk_count: int = 0
+    error: Optional[str] = None
     ingested_at: Optional[datetime]
     created_at: datetime
     class Config:
-        from_attributes = True
+        from_attributes = True

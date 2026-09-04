@@ -3,13 +3,42 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from pydantic import BaseModel
 
 from app.database import get_db
-from app.auth import require_organizer
+from app.auth import require_organizer, require_any_role
 from app.models.resource import ResourceItem
 from app.schemas.resources import ResourceItemCreate, ResourceItemOut
 
 router = APIRouter(prefix="/resources", tags=["resources"])
+
+
+class ResourcePoolPublic(BaseModel):
+    """Participant-facing view of a resource pool (no organizer internals)."""
+    id: uuid.UUID
+    name: str
+    resource_type: str
+    total_quantity: int
+    available_quantity: int
+
+    class Config:
+        from_attributes = True
+
+
+@router.get("/available", response_model=list[ResourcePoolPublic])
+async def list_available_resources(
+    _payload=Depends(require_any_role),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    List resource pools with live stock.
+
+    Accessible to participants (so the request screen can show live stock
+    and availability) and organizers. This is the participant-facing view
+    of what POST /resource-requests can actually allocate.
+    """
+    result = await db.execute(select(ResourceItem).order_by(ResourceItem.name))
+    return result.scalars().all()
 
 
 @router.post("", response_model=ResourceItemOut, status_code=status.HTTP_201_CREATED)

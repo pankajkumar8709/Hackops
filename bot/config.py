@@ -25,6 +25,11 @@ class BotConfig:
     # Backend API
     BACKEND_URL: str = os.environ.get("BACKEND_URL", "http://localhost:8000")
 
+    # Organizer credentials — the bot authenticates to the API as an
+    # organizer so every bot -> API call carries a valid JWT.
+    ORGANIZER_USERNAME: str = os.environ.get("ORGANIZER_USERNAME", "organizer")
+    ORGANIZER_PASSWORD: str = os.environ.get("ORGANIZER_PASSWORD", "")
+
     # Bot behavior
     COMMAND_PREFIX: str = os.environ.get("BOT_COMMAND_PREFIX", "!")
     BOT_NAME: str = "Pulse"

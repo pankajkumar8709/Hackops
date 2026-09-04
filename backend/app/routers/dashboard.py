@@ -15,6 +15,7 @@ import csv
 import io
 import json
 import asyncio
+import uuid
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, Query, status
@@ -265,6 +266,159 @@ async def get_approval_queue(
     )
 
 
+# ─── Approval queue actions (approve / reject) ─────────────
+
+async def _log_approval_action(
+    db: AsyncSession,
+    decision: str,  # "approve" | "reject"
+    entity_type: str,
+    entity_id: uuid.UUID,
+    description: str,
+    note: str | None,
+):
+    """Write an AgentAction row recording an organizer's approval decision."""
+    from app.services.orchestrator import _log_action, build_action_summary
+
+    action_type = "approve_action" if decision == "approve" else "reject_action"
+    reasoning = f"Organizer {decision}d: {description}"
+    if note:
+        reasoning += f" — {note}"
+
+    kwargs = {}
+    if entity_type == "mentor_allocation":
+        alloc = (await db.execute(
+            select(MentorAllocation).where(MentorAllocation.id == entity_id)
+        )).scalar_one_or_none()
+        if alloc:
+            kwargs["issue_id"] = alloc.issue_id
+
+    summary = build_action_summary(
+        action_type, {"issue_id": str(entity_id)}, reasoning, reasoning
+    )
+    await _log_action(
+        db=db,
+        action_type=action_type,
+        trigger_snapshot={"entity_type": entity_type, "entity_id": str(entity_id)},
+        reasoning=reasoning,
+        policy_result="HUMAN_APPROVAL",
+        outcome=reasoning,
+        summary=summary,
+        **kwargs,
+    )
+
+
+@router.patch("/approval-queue/{item_id}/approve")
+async def approve_queue_item(
+    item_id: uuid.UUID,
+    _organizer=Depends(require_organizer),
+    db: AsyncSession = Depends(get_db),
+    note: str | None = Query(default=None),
+):
+    """
+    Approve an item in the queue, executing the proposed action.
+
+    - mentor_allocation: the proposed mentor is accepted for the issue.
+    - resource_low_stock: restock is authorized (logged for audit).
+
+    The decision is written to the AgentAction explainability log.
+    """
+    # Try mentor allocation first (ids are unique UUIDs)
+    alloc = (await db.execute(
+        select(MentorAllocation).where(MentorAllocation.id == item_id)
+    )).scalar_one_or_none()
+
+    if alloc:
+        if alloc.status != "proposed":
+            raise HTTPException(status_code=409, detail=f"Allocation already {alloc.status}")
+        mentor = (await db.execute(
+            select(Mentor).where(Mentor.id == alloc.mentor_id)
+        )).scalar_one_or_none()
+        issue = (await db.execute(
+            select(Issue).where(Issue.id == alloc.issue_id)
+        )).scalar_one_or_none()
+        desc = f"mentor {mentor.name if mentor else '?'} for issue {str(alloc.issue_id)[:8]}"
+
+        alloc.status = "accepted"
+        alloc.responded_at = datetime.now(timezone.utc)
+
+        # Notify the team that raised the issue
+        if issue and issue.team_id:
+            members = (await db.execute(
+                select(Participant).where(Participant.team_id == issue.team_id)
+            )).scalars().all()
+            for m in members:
+                db.add(Notification(
+                    recipient_id=m.id,
+                    team_id=issue.team_id,
+                    channel="in_app",
+                    content=f"Your mentor request was approved — {mentor.name if mentor else 'a mentor'} has been assigned to your issue.",
+                    trigger_reason="organizer_approval:mentor",
+                    reminder_type="mentor_assigned",
+                ))
+
+        await _log_approval_action(db, "approve", "mentor_allocation", item_id, desc, note)
+        await db.commit()
+        return {"id": str(item_id), "decision": "approved", "entity_type": "mentor_allocation", "status": "accepted", "message": f"Approved {desc}"}
+
+    # Resource pool out-of-stock alert
+    pool = (await db.execute(
+        select(ResourceItem).where(ResourceItem.id == item_id)
+    )).scalar_one_or_none()
+    if pool:
+        desc = f"restock authorization for pool '{pool.name}'"
+        await _log_approval_action(db, "approve", "resource_item", item_id, desc, note)
+        await db.commit()
+        return {"id": str(item_id), "decision": "approved", "entity_type": "resource_item", "message": f"Approved {desc}"}
+
+    raise HTTPException(status_code=404, detail="Approval item not found")
+
+
+@router.patch("/approval-queue/{item_id}/reject")
+async def reject_queue_item(
+    item_id: uuid.UUID,
+    _organizer=Depends(require_organizer),
+    db: AsyncSession = Depends(get_db),
+    note: str | None = Query(default=None),
+):
+    """
+    Reject an item in the queue, discarding the proposed action.
+
+    - mentor_allocation: the proposal is declined (the orchestrator may
+      propose a different mentor on its next sweep).
+    - resource_low_stock: the alert is dismissed and logged for audit.
+    """
+    alloc = (await db.execute(
+        select(MentorAllocation).where(MentorAllocation.id == item_id)
+    )).scalar_one_or_none()
+
+    if alloc:
+        if alloc.status != "proposed":
+            raise HTTPException(status_code=409, detail=f"Allocation already {alloc.status}")
+        mentor = (await db.execute(
+            select(Mentor).where(Mentor.id == alloc.mentor_id)
+        )).scalar_one_or_none()
+        desc = f"mentor {mentor.name if mentor else '?'} for issue {str(alloc.issue_id)[:8]}"
+
+        alloc.status = "declined"
+        alloc.responded_at = datetime.now(timezone.utc)
+        alloc.reasoning = (alloc.reasoning or "") + " | Rejected by organizer"
+
+        await _log_approval_action(db, "reject", "mentor_allocation", item_id, desc, note)
+        await db.commit()
+        return {"id": str(item_id), "decision": "rejected", "entity_type": "mentor_allocation", "status": "declined", "message": f"Rejected {desc}"}
+
+    pool = (await db.execute(
+        select(ResourceItem).where(ResourceItem.id == item_id)
+    )).scalar_one_or_none()
+    if pool:
+        desc = f"restock alert for pool '{pool.name}'"
+        await _log_approval_action(db, "reject", "resource_item", item_id, desc, note)
+        await db.commit()
+        return {"id": str(item_id), "decision": "rejected", "entity_type": "resource_item", "message": f"Rejected {desc}"}
+
+    raise HTTPException(status_code=404, detail="Approval item not found")
+
+
 # ─── Broadcast ───────────────────────────────────────────
 
 @router.post("/broadcast", response_model=BroadcastResult)
@@ -436,11 +590,22 @@ async def export_submissions_csv(
 # ─── WebSocket for live updates ──────────────────────────
 
 @router.websocket("/ws")
-async def dashboard_websocket(websocket: WebSocket):
+async def dashboard_websocket(websocket: WebSocket, token: str = Query(default="")):
     """
     WebSocket endpoint for live dashboard updates.
-    Sends periodic health snapshots and real-time event notifications.
+
+    Requires an organizer JWT passed as a query parameter (?token=...) —
+    browsers cannot set headers on a WebSocket handshake. Connections
+    without a valid token are closed immediately.
     """
+    from app.auth import require_organizer_ws
+
+    # Authenticate before accepting
+    try:
+        await require_organizer_ws(websocket, token)
+    except Exception:
+        return
+
     await ws_manager.connect(websocket)
     try:
         while True:

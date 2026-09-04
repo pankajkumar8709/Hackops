@@ -113,6 +113,8 @@ async def send_team_notification(
     reminder_type: Optional[str] = None,
 ) -> list[Notification]:
     """Send a notification to all members of a team."""
+    from app.models.participant import Participant
+
     result = await db.execute(
         select(Participant).where(Participant.team_id == team_id)
     )

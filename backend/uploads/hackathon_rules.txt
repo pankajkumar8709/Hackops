@@ -1,0 +1,37 @@
+# Hackathon Rules & FAQ
+
+## Submission Deadline
+All submissions must be made by 11:59 PM IST on the final day of the hackathon.
+Late submissions will not be accepted under any circumstances.
+
+## Team Size
+Each team must have between 2 and 5 members. Solo submissions are not allowed.
+
+## Code of Conduct
+All participants must adhere to the code of conduct. Harassment, cheating, or
+plagiarism will result in immediate disqualification.
+
+## Technology Stack
+Teams are free to use any technology stack. However, all code must be written
+during the hackathon period. Pre-existing code is not allowed unless it is
+a publicly available open-source library.
+
+## Judging Criteria
+Projects will be judged on:
+1. Innovation (30%)
+2. Technical Complexity (25%)
+3. Impact & Usefulness (25%)
+4. Presentation & Demo (20%)
+
+## Prizes
+First place: $5,000
+Second place: $3,000
+Third place: $1,000
+All participants receive certificates of participation.
+
+## Mentors
+Mentors are available throughout the event. Use the /mentor command to request help.
+
+## Resources
+GPU credits and API keys are available on a first-come, first-served basis.
+Request through the resource allocation portal.

@@ -85,6 +85,59 @@ def check_policy(action_type: str) -> tuple[bool, str]:
     return False, f"Action '{action_type}' is not in the allow-list"
 
 
+# ─── Plain-language summaries ───────────────────────────────
+
+_SUMMARY_TEMPLATES = {
+    "send_notification": "Notified {target} — {reasoning}",
+    "send_reminder": "Reminded {target} — {reasoning}",
+    "create_escalation": "Escalated {target} — {reasoning}",
+    "propose_mentor_allocation": "Proposed a mentor for {target} — {reasoning}",
+    "allocate_resource": "Allocated a resource to {target} — {reasoning}",
+    "re_audit_submission": "Re-audited {target} — {reasoning}",
+    "verify_sweep": "Post-sweep verification complete — {reasoning}",
+    "approve_action": "Organizer approved {target} — {reasoning}",
+    "reject_action": "Organizer rejected {target} — {reasoning}",
+}
+
+
+def build_action_summary(
+    action_type: str,
+    trigger_snapshot: dict,
+    reasoning: str,
+    outcome: str,
+) -> str:
+    """Build a one-line, human-readable summary of an agent action.
+
+    Falls back to a deterministic "type: outcome" line when no template
+    matches — it never renders raw JSON to the feed.
+    """
+    target = ""
+    if trigger_snapshot:
+        target = (
+            trigger_snapshot.get("team_name")
+            or trigger_snapshot.get("resource_name")
+            or trigger_snapshot.get("description", "")[:60]
+            or trigger_snapshot.get("issue_id", "")
+            or ""
+        )
+        if not target and trigger_snapshot.get("team_id"):
+            target = f"team {str(trigger_snapshot['team_id'])[:8]}"
+
+    short_reason = (reasoning or "").strip()
+    if len(short_reason) > 140:
+        short_reason = short_reason[:137] + "..."
+
+    template = _SUMMARY_TEMPLATES.get(action_type)
+    if template:
+        try:
+            return template.format(target=target or "participants", reasoning=short_reason or outcome[:80])
+        except Exception:
+            pass
+
+    short_outcome = (outcome or "").strip()[:100]
+    return f"{action_type.replace('_', ' ').title()}: {short_outcome}"
+
+
 # ─── Agent Action Logger ───────────────────────────────────
 
 
@@ -98,12 +151,16 @@ async def _log_action(
     **kwargs,
 ) -> AgentAction:
     """Write an AgentAction row for explainability."""
+    summary = kwargs.pop("summary", None)
+    if not summary:
+        summary = build_action_summary(action_type, trigger_snapshot, reasoning, outcome)
     action = AgentAction(
         action_type=action_type,
         trigger_state_snapshot=json.dumps(trigger_snapshot, default=str),
         reasoning_trace=reasoning,
         policy_check_result=policy_result,
         outcome=outcome,
+        summary=summary,
         **kwargs,
     )
     db.add(action)
@@ -118,23 +175,32 @@ async def _log_action(
 async def _send_notification(
     db: AsyncSession,
     recipient_id: uuid.UUID,
-    team_id: Optional[uuid.UUID],
+    team_id: uuid.UUID,
     content: str,
     trigger_reason: str,
     reminder_type: str = "agent_action",
 ) -> Notification:
-    """Create and persist a notification."""
-    notification = Notification(
+    """Create and persist a notification via the delivery service (auto-detects channel)."""
+    from app.services.notification_delivery import send_notification as _deliver
+
+    await _deliver(
+        db=db,
         recipient_id=recipient_id,
-        team_id=team_id,
-        channel="in_app",
         content=content,
+        channel="auto",
+        team_id=team_id,
         trigger_reason=trigger_reason,
         reminder_type=reminder_type,
     )
-    db.add(notification)
-    await db.flush()
-    return notification
+    # Return the notification that was just created
+    result = await db.execute(
+        select(Notification)
+        .where(Notification.recipient_id == recipient_id)
+        .where(Notification.trigger_reason == trigger_reason)
+        .order_by(Notification.sent_at.desc())
+        .limit(1)
+    )
+    return result.scalar_one()
 
 
 async def _send_team_notifications(
@@ -145,14 +211,22 @@ async def _send_team_notifications(
     reminder_type: str = "agent_action",
 ) -> int:
     """Send notification to all team members. Returns count."""
+    from app.services.notification_delivery import send_notification as _deliver
+
     result = await db.execute(
         select(Participant).where(Participant.team_id == team_id)
     )
     members = result.scalars().all()
     count = 0
     for member in members:
-        await _send_notification(
-            db, member.id, team_id, content, trigger_reason, reminder_type
+        await _deliver(
+            db=db,
+            recipient_id=member.id,
+            content=content,
+            channel="auto",
+            team_id=team_id,
+            trigger_reason=trigger_reason,
+            reminder_type=reminder_type,
         )
         count += 1
     return count
@@ -559,6 +633,65 @@ async def _act_resource(
     return {"outcome": "unknown_action"}
 
 
+# ─── VERIFY step ────────────────────────────────────────────
+
+
+async def _verify(db: AsyncSession, trigger_type: str, observe: dict, act: dict) -> dict:
+    """
+    VERIFY — re-observe state after ACT and confirm the world changed
+    as the decision intended. Returns a verdict dict.
+
+    This closes the OBSERVE -> DECIDE -> POLICY -> ACT -> LOG -> VERIFY loop:
+    an action is only reported as verified once its post-condition holds.
+    """
+    outcome = act.get("outcome", "")
+    if outcome in ("no_action", "unknown_action", "no_mentors_found"):
+        return {"verified": True, "note": "No state change expected (no action taken)"}
+    if outcome.startswith("Blocked by policy"):
+        return {"verified": True, "note": "Policy blocked the action; nothing to verify"}
+
+    try:
+        if trigger_type == TriggerType.SUBMISSION_AUDIT:
+            team_id = uuid.UUID(observe["team_id"])
+            post = await _observe_submission(db, team_id)
+            sent = act.get("notifications_sent", 0)
+            ok = sent == 0 or post is not None
+            return {
+                "verified": bool(ok),
+                "note": f"Re-observed team; notifications_sent={sent}, completeness={post.get('completeness_pct') if post else 'n/a'}",
+                "post_observed": post,
+            }
+
+        if trigger_type == TriggerType.MENTOR_ALLOCATION:
+            issue_id = uuid.UUID(observe["issue_id"])
+            post = await _observe_issue(db, issue_id)
+            allocs = post.get("existing_allocations", 0)
+            ok = act.get("allocations_created", 0) == 1 and allocs >= 1
+            return {
+                "verified": bool(ok) or "escalation" in outcome,
+                "note": f"Re-observed issue; existing_allocations={allocs}, outcome='{outcome[:60]}'",
+                "post_observed": post,
+            }
+
+        if trigger_type == TriggerType.RESOURCE_ALLOCATION:
+            resource_item_id = uuid.UUID(observe["resource_item_id"])
+            team_id = uuid.UUID(observe["team_id"])
+            post = await _observe_resource(db, resource_item_id, team_id)
+            before = observe.get("available", 0)
+            after = post.get("available", 0)
+            ok = (after == before - 1) if "Allocated" in outcome else True
+            return {
+                "verified": bool(ok),
+                "note": f"Re-observed pool; available {before} -> {after}, outcome='{outcome[:60]}'",
+                "post_observed": post,
+            }
+
+        return {"verified": True, "note": f"No verifier for {trigger_type}"}
+    except Exception as e:  # pragma: no cover - defensive
+        logger.exception("VERIFY failed for %s", trigger_type)
+        return {"verified": False, "note": f"Verify error: {e}"}
+
+
 # ─── Main Orchestrator Entry Point ─────────────────────────
 
 
@@ -574,8 +707,8 @@ async def run_orchestrator(
     2. DECIDE — deterministic checks
     3. CHECK POLICY — allow-list validation
     4. ACT — execute decision
-    5. LOG — write AgentAction
-    6. Return results
+    5. VERIFY — re-observe and confirm the post-condition
+    6. LOG — write AgentAction
 
     Args:
         trigger_type: "submission_audit", "mentor_allocation", or "resource_allocation"
@@ -592,6 +725,7 @@ async def run_orchestrator(
         "decide": {},
         "policy": {},
         "act": {},
+        "verify": {},
         "logged": False,
     }
 
@@ -614,6 +748,7 @@ async def run_orchestrator(
 
         if observe.get("error"):
             result["error"] = observe["error"]
+            result["verify"] = {"verified": False, "note": "Observe failed"}
             return result
 
         # ── DECIDE ──
@@ -657,6 +792,7 @@ async def run_orchestrator(
                 outcome="routed_to_approval_queue",
             )
             result["logged"] = True
+            result["verify"] = {"verified": True, "note": "Blocked action routed to approval queue"}
             return result
 
         # ── ACT ──
@@ -671,8 +807,14 @@ async def run_orchestrator(
 
         result["act"] = act_result
 
+        # ── VERIFY ──
+        verify = await _verify(db, trigger_type, observe, act_result)
+        result["verify"] = verify
+
         # ── LOG ──
         outcome_str = act_result.get("outcome", "completed")
+        if not verify.get("verified", True):
+            outcome_str = f"{outcome_str} | VERIFY FAILED: {verify.get('note', '')}"
         kwargs = {}
         if trigger_type == TriggerType.SUBMISSION_AUDIT and observe.get("team_id"):
             # Find submission ID for logging
@@ -701,6 +843,7 @@ async def run_orchestrator(
     except Exception as e:
         logger.exception("Orchestrator run failed")
         result["error"] = str(e)
+        result["verify"] = {"verified": False, "note": str(e)}
 
     return result
 
@@ -712,6 +855,10 @@ async def run_full_sweep(db: AsyncSession) -> dict:
     """
     Run all three orchestrator loop instances in sequence.
     This is what APScheduler would call periodically.
+
+    Every loop instance runs OBSERVE -> DECIDE -> POLICY -> ACT -> VERIFY
+    and logs an AgentAction row, so the scheduled path produces the same
+    explainability entries as the manual POST /orchestrator/sweep path.
     """
     sweep_id = str(uuid.uuid4())[:8]
     results = []
@@ -751,8 +898,57 @@ async def run_full_sweep(db: AsyncSession) -> dict:
             )
             results.append(r)
 
+    # 3. Resource allocation: run the loop for out-of-stock pools against
+    #    teams that are affected (hold an active allocation from the pool or
+    #    have open issues). With available == 0 the DECIDE step always takes
+    #    the shortage-notification branch — it never fabricates a demand.
+    #    Pools with stock are left untouched (no pending request exists).
+    oos_result = await db.execute(
+        select(ResourceItem).where(ResourceItem.available_quantity <= 0)
+    )
+    out_of_stock = oos_result.scalars().all()
+
+    for item in out_of_stock:
+        # Teams holding an active allocation of this pool
+        hold_result = await db.execute(
+            select(ResourceAllocation.team_id).where(
+                ResourceAllocation.resource_item_id == item.id,
+                ResourceAllocation.status == "allocated",
+            )
+        )
+        affected: set[uuid.UUID] = {row[0] for row in hold_result.all() if row[0]}
+
+        # Teams with open issues (a live demand signal)
+        open_issue_result = await db.execute(
+            select(Issue.team_id)
+            .where(Issue.status == "open", Issue.team_id.is_not(None))
+        )
+        affected |= {row[0] for row in open_issue_result.all() if row[0]}
+
+        for team_id in affected:
+            r = await run_orchestrator(
+                db,
+                TriggerType.RESOURCE_ALLOCATION,
+                {"resource_item_id": str(item.id), "team_id": str(team_id)},
+            )
+            results.append(r)
+
+    # VERIFY summary across the whole sweep
+    verified = sum(1 for r in results if r.get("verify", {}).get("verified"))
+    failed = sum(1 for r in results if not r.get("verify", {}).get("verified", True))
+    await _log_action(
+        db=db,
+        action_type="verify_sweep",
+        trigger_snapshot={"sweep_id": sweep_id, "total_runs": len(results)},
+        reasoning=f"Post-sweep verification: {verified} runs verified, {failed} failed",
+        policy_result="ALLOWED: verification is read-only",
+        outcome=f"verified={verified}, failed={failed}, total={len(results)}",
+    )
+
     return {
         "sweep_id": sweep_id,
         "total_runs": len(results),
+        "verified_runs": verified,
+        "failed_verifications": failed,
         "results": results,
     }

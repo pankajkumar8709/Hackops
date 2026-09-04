@@ -6,8 +6,7 @@ from sqlalchemy import select
 
 from app.database import get_db
 from app.auth import (
-    generate_participant_token,
-    create_jwt,
+    hash_password,
     require_participant,
     require_organizer,
 )
@@ -23,8 +22,9 @@ async def register_participant(
     db: AsyncSession = Depends(get_db),
 ):
     """
-    Register a new participant.
-    Returns a one-time plain token — store it, it is never shown again.
+    Register a new participant with email and password.
+    Password is hashed with bcrypt before storage. Login via
+    POST /auth/participant/login with email + password.
     """
     # Check duplicate email
     existing = await db.execute(
@@ -36,12 +36,12 @@ async def register_participant(
             detail="Email already registered",
         )
 
-    plain_token, token_hash = generate_participant_token()
+    password_hash = hash_password(body.password)
 
     participant = Participant(
         name=body.name,
         email=body.email,
-        token_hash=token_hash,
+        password_hash=password_hash,
         skills=body.skills,
         track_pref=body.track_pref,
         discord_handle=body.discord_handle,
@@ -50,9 +50,6 @@ async def register_participant(
     db.add(participant)
     await db.commit()
     await db.refresh(participant)
-
-    # Issue a JWT wrapping the participant ID
-    jwt_token = create_jwt({"sub": str(participant.id), "role": "participant"})
 
     return ParticipantOut(
         id=participant.id,
@@ -63,7 +60,6 @@ async def register_participant(
         discord_handle=participant.discord_handle,
         role=participant.role,
         team_id=participant.team_id,
-        token=jwt_token,
     )
 
 

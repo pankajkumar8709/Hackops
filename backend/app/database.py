@@ -25,9 +25,9 @@ def _clean_asyncpg_url(url: str) -> tuple[str, dict]:
 
     connect_args = {}
     if needs_ssl:
+        # Use the system trust store with full certificate verification.
+        # (Previously disabled with CERT_NONE — re-enabled as a security fix.)
         ctx = _ssl.create_default_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = _ssl.CERT_NONE
         connect_args["ssl"] = ctx
 
     return clean_url, connect_args

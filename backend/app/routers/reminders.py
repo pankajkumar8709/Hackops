@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.database import get_db
-from app.auth import require_participant, require_organizer
+from app.auth import require_participant, require_organizer, require_any_role
 from app.models.participant import Participant
 from app.models.issue import Notification
 from app.schemas.reminders import (
@@ -143,10 +143,15 @@ async def get_my_notifications(
 )
 async def mark_notification_read(
     notification_id: uuid.UUID,
-    participant: Participant = Depends(require_participant),
+    payload: dict = Depends(require_any_role),
     db: AsyncSession = Depends(get_db),
 ):
-    """Mark a notification as read. Participants can only mark their own."""
+    """
+    Mark a notification as read.
+
+    Participants can only mark their own notifications. Organizers (e.g.
+    the Discord bot after delivering a DM) may mark any as read.
+    """
     result = await db.execute(
         select(Notification).where(Notification.id == notification_id)
     )
@@ -158,11 +163,22 @@ async def mark_notification_read(
             detail="Notification not found.",
         )
 
-    if notification.recipient_id != participant.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="You can only mark your own notifications as read.",
+    if payload.get("role") == "participant":
+        # Load the participant from the JWT
+        result = await db.execute(
+            select(Participant).where(Participant.id == payload.get("sub"))
         )
+        participant = result.scalar_one_or_none()
+        if not participant:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Participant not found",
+            )
+        if notification.recipient_id != participant.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You can only mark your own notifications as read.",
+            )
 
     notification.read = True
     await db.flush()

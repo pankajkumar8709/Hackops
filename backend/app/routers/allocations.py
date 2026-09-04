@@ -152,18 +152,23 @@ async def get_my_allocations(
     ),
 ):
     """
-    Mentor views their own proposed allocations.
+    View allocations for the authenticated participant's own team.
 
-    Note: In hackathon scope, mentors are matched by skill overlap.
-    A participant can view allocations where they are the proposed mentor.
-    For demo purposes, we return all proposed allocations (any mentor).
+    Row-level scoping: only allocations whose underlying Issue belongs to
+    the caller's team are returned — a user can never see another team's
+    mentor allocations.
     """
+    if not participant.team_id:
+        return []
+
     query = (
         select(MentorAllocation)
+        .join(Issue, Issue.id == MentorAllocation.issue_id)
         .options(
             selectinload(MentorAllocation.mentor),
             selectinload(MentorAllocation.issue),
         )
+        .where(Issue.team_id == participant.team_id)
         .order_by(MentorAllocation.proposed_at.desc())
     )
 

@@ -18,7 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
-from app.auth import require_participant, require_organizer
+from app.auth import require_participant, require_organizer, require_any_role
 from app.models.participant import Participant
 from app.models.issue import Issue
 from app.models.escalation import Escalation
@@ -43,7 +43,7 @@ router = APIRouter(tags=["issues"])
 @router.post("/issues", response_model=IssueOut, status_code=status.HTTP_201_CREATED)
 async def create_issue(
     body: IssueCreate,
-    participant: Participant = Depends(require_participant),
+    payload: dict = Depends(require_any_role),
     db: AsyncSession = Depends(get_db),
     minutes_to_deadline: Optional[float] = Query(
         default=None,
@@ -52,11 +52,42 @@ async def create_issue(
     ),
 ):
     """
-    Participant reports an issue (problem, blocker, question needing human help).
+    Report an issue (problem, blocker, question needing human help).
+
+    Participants report for their own team (identity from JWT). The
+    organizer-authenticated Discord bot may report on behalf of a specific
+    participant by passing `participant_id` in the body.
 
     The urgency score is computed deterministically and the issue may be
     auto-escalated to the organizer queue if urgency crosses threshold.
     """
+    if payload.get("role") == "participant":
+        result = await db.execute(
+            select(Participant).where(Participant.id == payload.get("sub"))
+        )
+        participant = result.scalar_one_or_none()
+        if not participant:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Participant not found",
+            )
+    else:
+        # Organizer (bot) acting on behalf of a participant
+        if not body.participant_id:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="participant_id is required when an organizer reports an issue",
+            )
+        result = await db.execute(
+            select(Participant).where(Participant.id == body.participant_id)
+        )
+        participant = result.scalar_one_or_none()
+        if not participant:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Participant not found",
+            )
+
     if not participant.team_id:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -203,10 +234,13 @@ async def resolve_escalation(
             detail="Escalation not found.",
         )
 
-    # Mark escalation as resolved
+    # Mark escalation as resolved (with notes + optional assignment)
     escalation.status = "resolved"
     escalation.resolution_notes = body.resolution_notes
     escalation.resolved_at = datetime.now(timezone.utc)
+    assignee = body.assigned_organizer or body.assigned_mentor
+    if assignee:
+        escalation.assigned_organizer = assignee
 
     # Also resolve the underlying issue
     issue_result = await db.execute(

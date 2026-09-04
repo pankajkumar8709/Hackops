@@ -21,6 +21,7 @@ import sys
 import os
 import time
 from datetime import datetime, timezone
+import pulse_test_creds
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
@@ -59,7 +60,7 @@ async def run_demo():
     async with httpx.AsyncClient(timeout=60) as c:
         # Organizer login
         r = await c.post(f"{BASE}/auth/organizer/login", json={
-            "username": "organizer", "password": "pulse_admin_2026"
+            "username": "organizer", "password": pulse_test_creds.ORG_PASS
         })
         results.append(_result("Organizer login", r.status_code == 200))
         org_token = r.json()["access_token"]

@@ -61,3 +61,15 @@ class Notification(Base):
     sent_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     recipient: Mapped["Participant"] = relationship("Participant", back_populates="notifications")
+
+    @property
+    def delivery_status(self) -> str:
+        """Whether this notification actually reached the participant.
+
+        in_app notifications exist in the inbox the moment they are created.
+        External channels (discord/email) are "pending" until the delivery
+        mechanism (e.g. the Discord bot) marks them read.
+        """
+        if self.channel == "in_app":
+            return "delivered"
+        return "delivered" if self.read else "pending"

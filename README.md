@@ -135,7 +135,7 @@ This creates:
 - 1 event with compressed timeline (8h deadline)
 - 3 tracks (AI/ML, Web/Fullstack, Hardware/IoT)
 - 18 teams across tracks with varied completeness
-- 41 participants
+- 46 participants (password: `demo1234`)
 - 5 mentors (4 available, 1 busy)
 - 5 resource pools (one deliberately out of stock)
 - 4 issue scenarios (auto-resolvable, escalation, false-alarm, mentor-request)
@@ -161,14 +161,18 @@ Requires `DISCORD_TOKEN` in `.env`.
 
 ### Phase 1 — Data Model
 - 16 SQLAlchemy models: `Participant`, `Team`, `Event`, `Track`, `ScheduleEvent`, `Document`, `Rule` (pgvector), `Mentor`, `Issue`, `Notification`, `Submission`, `SubmissionRequirement`, `Escalation`, `AgentAction`, `ResourceItem`, `ResourceAllocation`
+- `Participant` model: `email`, `password_hash` (bcrypt), `token_hash` (legacy), `team_id` FK
 - Full foreign key relationships with row-level scoping
 
 ### Phase 2 — Onboarding & Auth
-- `POST /participants/register` — captures name, skills[], domain preference, Discord handle
+- `POST /participants/register` — captures name, email, password, skills[], domain preference, Discord handle
+- `POST /auth/participant/login` — email + password → JWT
 - `POST /teams` / `POST /teams/{id}/join` — team creation and joining
 - `POST /auth/organizer/login` → JWT
 - Participant JWT with `team_id` scoping
 - **Row-level scoping middleware** — every participant endpoint filters by their team
+- Passwords hashed with bcrypt (never stored in plaintext)
+- Rate limiting on auth endpoints (5 attempts/min/IP)
 
 ### Phase 3 — Organizer Event Setup
 - `POST /events`, `POST /tracks`, `POST /submission-requirements`
@@ -252,10 +256,11 @@ Requires `DISCORD_TOKEN` in `.env`.
 - **Chat widget**: in-app chat mirroring Discord, calls RAG pipeline
 - **Team status**: submission completeness, issues, resources, notifications
 - **Match suggestions**: Phase 10 matchmaking with skill gap analysis
-- Token-based auth (no username/password)
+- Password-based auth (email + password)
 
 ### Phase 15 — Seed Data & Demo Script
-- 18 teams, 41 participants, 5 mentors, 5 resource pools, 4 issues
+- 18 teams, 46 participants, 5 mentors, 5 resource pools, 4 issues
+- Demo password: `demo1234` (all seeded participants)
 - Compressed timeline (1 real minute = 1 simulated hour)
 - `demo_script.py` — rehearseable Team-42 closed-loop sequence
 - Full reproducibility check (run twice, same results)
@@ -269,7 +274,8 @@ Requires `DISCORD_TOKEN` in `.env`.
 | Endpoint | Method | Auth | Description |
 |---|---|---|---|
 | `/auth/organizer/login` | POST | None | Login as organizer → JWT |
-| `/participants/register` | POST | None | Register participant → token |
+| `/auth/participant/login` | POST | None | Login participant (email + password) → JWT |
+| `/participants/register` | POST | None | Register participant (email + password) |
 | `/participants/me` | GET | Participant | Get own profile |
 
 ### Core Endpoints
@@ -372,20 +378,28 @@ Requires `DISCORD_TOKEN` in `.env`.
 
 ## 🧪 Running Tests
 
-Each phase has a smoke test. Run from `backend/`:
+Each phase has a dedicated test file. Run from `backend/`:
 
 ```bash
 cd backend
 
-# Phase 13 — Organizer Dashboard
-python test_phase13.py
+# Phase 2 — Auth & Onboarding (29 checks)
+python test_phase2.py
 
-# Phase 14 — Participant UI
-python test_phase14.py
+# Phase 5 — Submission Audit (32 checks)
+python test_phase5.py
 
-# Phase 15 — Seed Data & Demo Script
-python test_phase15.py
+# Phase 7 — Mentor Allocation (19 checks)
+python test_phase7.py
+
+# Phase 8 — Resource Allocation (21 checks)
+python test_phase8.py
+
+# Remaining phases (6, 9, 10, 11, 13, 14, 15) — 31 checks
+python test_remaining.py
 ```
+
+**Total: 132 checks across all tests.**
 
 ---
 
@@ -431,7 +445,7 @@ hackops/
 │   │   ├── main.py               # App entry point, router registration
 │   │   ├── config.py             # Settings from .env
 │   │   ├── database.py           # SQLAlchemy async engine
-│   │   ├── auth.py               # JWT + participant token utilities
+│   │   ├── auth.py               # JWT + bcrypt password utilities
 │   │   ├── models/               # SQLAlchemy ORM models (16 tables)
 │   │   │   ├── team.py
 │   │   │   ├── participant.py
@@ -474,9 +488,11 @@ hackops/
 │   │       ├── notification_delivery.py
 │   │       ├── embeddings.py
 │   │       └── ingestion.py
-│   ├── test_phase13.py
-│   ├── test_phase14.py
-│   ├── test_phase15.py
+│   ├── test_phase2.py           # Auth & onboarding tests (29 checks)
+│   ├── test_phase5.py           # Submission audit tests (32 checks)
+│   ├── test_phase7.py           # Mentor allocation tests (19 checks)
+│   ├── test_phase8.py           # Resource allocation tests (21 checks)
+│   ├── test_remaining.py        # Remaining phases tests (31 checks)
 │   ├── seed_data.py              # Demo data seeder
 │   ├── demo_script.py            # Team-42 demo sequence
 │   └── requirements.txt
@@ -513,11 +529,12 @@ hackops/
 
 ### Organizer
 - **Username:** `organizer`
-- **Password:** `pulse_admin_2026`
+- **Password:** See `.env` → `ORGANIZER_PASSWORD`
 
 ### Participants
-- Use the token returned at registration (`POST /participants/register`)
-- After seeding: check the `participants` table for demo tokens
+- Register via `POST /participants/register` (email + password)
+- After seeding: all demo participants use password `demo1234`
+- Example: `POST /auth/participant/login` with `{"email": "alice@team1.dev", "password": "demo1234"}`
 
 ### URLs
 - **Backend API:** `http://localhost:8000`
@@ -537,7 +554,7 @@ hackops/
 | **Database** | PostgreSQL + pgvector | One DB for data + vector search |
 | **LLM** | Groq API (Llama 3) | Fast inference, free tier |
 | **Embeddings** | sentence-transformers (local) | Zero API cost |
-| **Auth** | JWT (organizer) + token (participant) | Simple, hackathon-appropriate |
+| **Auth** | JWT (organizer + participant, bcrypt passwords) | Simple, secure, hackathon-appropriate |
 | **Bot** | discord.py | Single-channel Discord integration |
 | **Background** | In-process async | No Redis/Celery needed |
 
@@ -555,7 +572,7 @@ The system uses 16 tables:
 | `documents` | Uploaded rules/FAQ docs |
 | `rules` | Chunked + embedded doc text (pgvector) |
 | `teams` | Teams with readiness status |
-| `participants` | Registered participants |
+| `participants` | Registered participants (email + bcrypt password) |
 | `submissions` | Team project submissions |
 | `submission_requirements` | Per-track required fields |
 | `issues` | Participant-reported problems |
