@@ -3,7 +3,10 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from .mentors import MentorOut
+from .resources import ResourceItemOut
 
 
 # ─── Event ──────────────────────────────────────
@@ -11,11 +14,13 @@ class EventCreate(BaseModel):
     name: str
     current_phase: str = "registration"
     timezone: str = "UTC"
+    deadline_at: Optional[datetime] = None
 
 class EventUpdate(BaseModel):
     name: Optional[str] = None
     current_phase: Optional[str] = None
     timezone: Optional[str] = None
+    deadline_at: Optional[datetime] = None
 
 class EventOut(BaseModel):
     id: uuid.UUID
@@ -78,3 +83,40 @@ class SubmissionRequirementOut(BaseModel):
     required: bool
     class Config:
         from_attributes = True
+
+
+# ─── Event Setup Wizard ─────────────────────────
+# One guided request that takes an organizer from "nothing" to a fully
+# configured event: event + tracks + submission requirements + optional
+# mentors and resource pools. A rules doc can then be uploaded separately.
+class WizardTrack(BaseModel):
+    name: str
+    eligibility_rules: Optional[str] = None
+    required_fields: list[str] = []  # e.g. ["repo_url", "demo_url", "description"]
+
+class WizardMentor(BaseModel):
+    name: str
+    skills: list[str] = []
+    availability_status: str = "available"
+    discord_handle: Optional[str] = None
+
+class WizardResourcePool(BaseModel):
+    name: str
+    resource_type: str
+    total_quantity: int = Field(ge=1)
+
+class EventWizardRequest(BaseModel):
+    name: str
+    current_phase: str = "registration"
+    timezone: str = "UTC"
+    deadline_at: Optional[datetime] = None
+    tracks: list[WizardTrack] = []
+    mentors: list[WizardMentor] = []
+    resource_pools: list[WizardResourcePool] = []
+
+class EventWizardResult(BaseModel):
+    event: EventOut
+    tracks: list[TrackOut] = []
+    requirements: list[SubmissionRequirementOut] = []
+    mentors: list["MentorOut"] = []
+    resource_pools: list["ResourceItemOut"] = []

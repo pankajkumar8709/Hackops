@@ -44,6 +44,7 @@ class OrchestratorRunResult(BaseModel):
     decide: dict = {}
     policy: dict = {}
     act: dict = {}
+    verify: dict = {}
     logged: bool = False
     error: Optional[str] = None
 
@@ -55,6 +56,7 @@ class AgentActionOut(BaseModel):
     """A single agent action from the explainability log."""
     id: uuid.UUID
     action_type: str
+    summary: Optional[str] = None
     trigger_state_snapshot: Optional[str] = None
     reasoning_trace: Optional[str] = None
     policy_check_result: Optional[str] = None
@@ -76,4 +78,6 @@ class OrchestratorSweepResult(BaseModel):
     """Result of a full orchestrator sweep across all teams/issues."""
     sweep_id: str
     total_runs: int
+    verified_runs: int = 0
+    failed_verifications: int = 0
     results: list[OrchestratorRunResult] = []

@@ -18,7 +18,6 @@ Usage:
 from __future__ import annotations
 
 import asyncio
-import hashlib
 import random
 import sys
 import os
@@ -26,6 +25,12 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
+
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+DEMO_PASSWORD = "demo1234"  # shared password for all seeded participants
 
 # ─── Configuration ───────────────────────────────────────────
 
@@ -119,6 +124,17 @@ RESOURCE_POOLS = [
 ]
 
 
+def _strip_sslmode(url: str) -> str:
+    """Remove query params asyncpg can't parse (mirrors app/database.py)."""
+    from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
+    parsed = urlparse(url)
+    params = parse_qs(parsed.query)
+    for key in ("sslmode", "ssl", "channel_binding"):
+        params.pop(key, None)
+    clean_query = urlencode(params, doseq=True)
+    return urlunparse(parsed._replace(query=clean_query))
+
+
 async def seed():
     """Seed the database with demo data."""
     import asyncpg
@@ -128,6 +144,7 @@ async def seed():
     from app.config import get_settings
     settings = get_settings()
     db_url = settings.database_url.replace("postgresql+asyncpg://", "postgresql://")
+    db_url = _strip_sslmode(db_url)
     conn = await asyncpg.connect(db_url)
 
     print("[SEED] Connected to database.")
@@ -198,6 +215,7 @@ async def seed():
     team_data = []  # (team_id, team_name, track_name, participants, submission_id)
     participant_counter = 0
     used_emails = set()
+    demo_credentials = []  # (email, password) for summary
 
     for t in TRACKS:
         track_teams = [tm for tm in TEAMS if tm["track"] == t["name"]]
@@ -221,14 +239,15 @@ async def seed():
 
                 name = f"{SEED_PREFIX} P{participant_counter}"
                 skills = random.sample(skills_pool, k=min(3, len(skills_pool)))
-                token_hash = hashlib.sha256(f"demo_token_{participant_counter}".encode()).hexdigest()
+                password_hash = pwd_context.hash(DEMO_PASSWORD)
 
                 pid = await conn.fetchval(
-                    "INSERT INTO participants (name, email, token_hash, skills, track_pref, discord_handle, role, team_id) "
+                    "INSERT INTO participants (name, email, password_hash, skills, track_pref, discord_handle, role, team_id) "
                     "VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id",
-                    name, email, token_hash, skills, t["name"], f"demo_user_{participant_counter}", "participant", tid,
+                    name, email, password_hash, skills, t["name"], f"demo_user_{participant_counter}", "participant", tid,
                 )
                 team_members.append(pid)
+                demo_credentials.append((email, DEMO_PASSWORD))
 
             # Create submission (if team has one)
             sub_id = None
@@ -331,13 +350,22 @@ async def seed():
     print(f"[SEED] Escalation created for high-severity issue.")
 
     # ─── 8. Resource Allocations ───────────────────
+    # Allocate from pools WITH stock (index 2 = Raspberry Pi is deliberately
+    # out of stock), and decrement each pool's available_quantity so the
+    # dashboard numbers reflect real allocations.
+    allocatable_pool_indexes = [i for i, rid in enumerate(resource_ids) if i != 2]
     for i, td in enumerate(team_data[:4]):
-        resource_idx = i % len(resource_ids)
+        pool_idx = allocatable_pool_indexes[i % len(allocatable_pool_indexes)]
+        rid = resource_ids[pool_idx]
         await conn.execute(
             "INSERT INTO resource_allocations (resource_item_id, team_id, status) VALUES ($1, $2, $3)",
-            resource_ids[resource_idx], td["team_id"], "allocated",
+            rid, td["team_id"], "allocated",
         )
-    print(f"[SEED] 4 resource allocations created.")
+        await conn.execute(
+            "UPDATE resource_items SET available_quantity = available_quantity - 1 WHERE id = $1",
+            rid,
+        )
+    print("[SEED] 4 resource allocations created (pool stock decremented).")
 
     # ─── 9. Agent Actions ──────────────────────────
     for td in team_data[:3]:
@@ -373,9 +401,15 @@ async def seed():
     for i in issues:
         print(f"    - {i['type']}: {i['team']}")
     print("=" * 60)
-    print("  Login tokens:")
-    print(f"    Organizer: organizer / pulse_admin_2026")
-    print(f"    Participants: use email-based login (see participant table)")
+    org_user = settings.organizer_username or "organizer"
+    org_pass = settings.organizer_password or "(not set in .env — see server log)"
+    print("  LOGIN CREDENTIALS")
+    print(f"    Organizer:   {org_user} / {org_pass}")
+    print(f"    Participant: log in at /auth/participant/login with email + password")
+    print(f"    Shared demo password: {DEMO_PASSWORD}")
+    print("    Example participant logins (email / password):")
+    for e, p in demo_credentials[:5]:
+        print(f"      {e}  /  {p}")
     print("=" * 60)
 
 

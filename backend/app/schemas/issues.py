@@ -17,14 +17,18 @@ from pydantic import BaseModel, Field
 class IssueCreate(BaseModel):
     """Create a new issue.
 
-    team_id is auto-populated from the participant's token.
+    team_id is auto-populated from the authenticated participant's token.
     severity: 0.0 (low) to 1.0 (critical), default 0.5.
     is_blocking: whether this issue blocks the team's progress.
+    participant_id: OPTIONAL — only honored when an organizer (e.g. the
+        Discord bot) creates the issue on behalf of a participant. Ignored
+        for participant callers, whose identity comes from their JWT.
     """
     description: str = Field(..., min_length=3, max_length=2000)
     category: str = Field(default="general", max_length=100)
     severity: float = Field(default=0.5, ge=0.0, le=1.0)
     is_blocking: bool = Field(default=False)
+    participant_id: Optional[uuid.UUID] = Field(default=None)
 
 
 class IssueOut(BaseModel):
@@ -50,8 +54,15 @@ class IssueOut(BaseModel):
 
 
 class EscalationResolve(BaseModel):
-    """Organizer resolves an escalation."""
+    """Organizer resolves an escalation.
+
+    resolution_notes: what was done to resolve it.
+    assigned_organizer / assigned_mentor: who owns/resolved the escalation
+        (surfaced on the dashboard and in the explainability feed).
+    """
     resolution_notes: str = Field(default="", max_length=2000)
+    assigned_organizer: Optional[str] = Field(default=None, max_length=255)
+    assigned_mentor: Optional[str] = Field(default=None, max_length=255)
 
 
 class EscalationOut(BaseModel):

@@ -39,32 +39,77 @@ bot = commands.Bot(
 
 # ─── HTTP Helper ──────────────────────────────────────────
 
+# Bot authenticates to the backend as an organizer; the JWT is fetched at
+# startup and refreshed automatically whenever the API answers 401.
+_api_token: Optional[str] = None
+_token_lock = asyncio.Lock()
+
+
+async def _refresh_token() -> str:
+    """Exchange organizer credentials for a fresh backend JWT."""
+    global _api_token
+    async with _token_lock:
+        import aiohttp
+
+        url = f"{config.BACKEND_URL}/auth/organizer/login"
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.post(
+                    url,
+                    json={
+                        "username": config.ORGANIZER_USERNAME,
+                        "password": config.ORGANIZER_PASSWORD,
+                    },
+                    timeout=aiohttp.ClientTimeout(total=10),
+                ) as resp:
+                    data = await resp.json()
+                    _api_token = data.get("access_token")
+        except Exception as e:
+            logger.error("Bot auth failed: %s", e)
+            _api_token = None
+    return _api_token or ""
+
 
 async def api_request(
     method: str,
     path: str,
     json_data: dict | None = None,
     params: dict | None = None,
+    retries: int = 1,
 ) -> dict | list | str:
-    """Make an HTTP request to the backend API."""
+    """Make an authenticated HTTP request to the backend API.
+
+    Every call carries `Authorization: Bearer <organizer JWT>`. On a 401 the
+    token is refreshed once and the request retried.
+    """
     import aiohttp
 
     url = f"{config.BACKEND_URL}{path}"
-    headers = {"Content-Type": "application/json"}
+    token = _api_token or await _refresh_token()
 
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.request(
-                method, url, json=json_data, params=params, headers=headers, timeout=aiohttp.ClientTimeout(total=15)
-            ) as resp:
-                text = await resp.text()
-                try:
-                    return json.loads(text)
-                except json.JSONDecodeError:
-                    return text
-    except Exception as e:
-        logger.error("API request failed: %s %s -> %s", method, path, e)
-        return {"error": str(e)}
+    for attempt in range(retries + 1):
+        headers = {"Content-Type": "application/json"}
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.request(
+                    method, url, json=json_data, params=params, headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=30),
+                ) as resp:
+                    text = await resp.text()
+                    if resp.status == 401 and attempt < retries:
+                        token = await _refresh_token()
+                        continue
+                    try:
+                        return json.loads(text)
+                    except json.JSONDecodeError:
+                        return text
+        except Exception as e:
+            logger.error("API request failed: %s %s -> %s", method, path, e)
+            return {"error": str(e)}
+    return {"error": "unauthorized"}
 
 
 # ─── Event Handlers ───────────────────────────────────────
@@ -76,6 +121,13 @@ async def on_ready():
     logger.info("Logged in as %s (ID: %s)", bot.user, bot.user.id)
     logger.info("Backend URL: %s", config.BACKEND_URL)
     logger.info("Channel ID: %s", config.DISCORD_CHANNEL_ID)
+
+    # Authenticate to the backend so every API call carries a JWT
+    await _refresh_token()
+    if _api_token:
+        logger.info("Backend auth: OK (organizer JWT)")
+    else:
+        logger.warning("Backend auth failed — check ORGANIZER_USERNAME/ORGANIZER_PASSWORD")
 
     # Start notification delivery loop
     if not notification_loop.is_running():
@@ -128,25 +180,29 @@ async def handle_channel_message(message: discord.Message):
 
         if isinstance(result, dict) and "answer" in result:
             answer = result["answer"]
-            sources = result.get("sources", [])
-            confidence = result.get("confidence", 0.0)
+            # API contract: citations: [{source_doc, chunk_text, similarity_score}], confident: bool
+            citations = result.get("citations", []) or []
+            confident = bool(result.get("confident", False))
 
             # Build response embed
             embed = discord.Embed(
                 title="Question Answered",
                 description=answer[:2000],
-                color=config.COLOR_SUCCESS if confidence > 0.5 else config.COLOR_WARNING,
+                color=config.COLOR_SUCCESS if confident else config.COLOR_WARNING,
             )
             embed.set_author(name=message.author.display_name, icon_url=message.author.avatar.url if message.author.avatar else None)
 
-            if sources:
+            if citations:
                 source_text = "\n".join(
-                    f"• {s.get('source', 'Unknown')} (chunk {s.get('chunk_index', '?')})"
-                    for s in sources[:3]
+                    f"• {c.get('source_doc', 'Unknown')} (confidence {c.get('similarity_score', 0):.0%})"
+                    for c in citations[:3]
                 )
                 embed.add_field(name="Sources", value=source_text[:1024], inline=False)
 
-            embed.set_footer(text=f"Confidence: {confidence:.0%}")
+            if confident:
+                embed.set_footer(text="Pulse is confident in this answer")
+            else:
+                embed.set_footer(text="No confirmed rule found — organizers have been notified")
 
             await message.reply(embed=embed, mention_author=False)
 
@@ -227,22 +283,26 @@ async def ask_command(ctx: commands.Context, *, question: str):
 
         if isinstance(result, dict) and "answer" in result:
             answer = result["answer"]
-            confidence = result.get("confidence", 0.0)
-            sources = result.get("sources", [])
+            citations = result.get("citations", []) or []
+            confident = bool(result.get("confident", False))
 
             embed = discord.Embed(
                 title="Answer",
                 description=answer[:2000],
-                color=config.COLOR_SUCCESS if confidence > 0.5 else config.COLOR_WARNING,
+                color=config.COLOR_SUCCESS if confident else config.COLOR_WARNING,
             )
 
-            if sources:
+            if citations:
                 source_text = "\n".join(
-                    f"• {s.get('source', 'Unknown')}" for s in sources[:3]
+                    f"• {c.get('source_doc', 'Unknown')} (confidence {c.get('similarity_score', 0):.0%})"
+                    for c in citations[:3]
                 )
                 embed.add_field(name="Sources", value=source_text[:1024], inline=False)
 
-            embed.set_footer(text=f"Confidence: {confidence:.0%}")
+            embed.set_footer(
+                text="Pulse is confident in this answer" if confident
+                else "No confirmed rule found — organizers have been notified"
+            )
             await ctx.reply(embed=embed, mention_author=False)
         else:
             await ctx.reply(
@@ -289,12 +349,13 @@ async def issue_command(ctx: commands.Context, *, description: str):
             )
             return
 
-        # Create the issue
+        # Create the issue on behalf of the found participant
         result = await api_request("POST", "/issues", json_data={
             "description": description,
             "category": "discord_report",
             "severity": 0.5,
             "is_blocking": False,
+            "participant_id": participant_id,
         })
 
         if isinstance(result, dict) and "id" in result:
@@ -350,29 +411,32 @@ async def status_command(ctx: commands.Context):
                 inline=True,
             )
 
-            # Try to get submission details
-            sub = await api_request("GET", f"/submissions/mine")
-            if isinstance(sub, dict) and "completeness_pct" in sub:
-                embed.add_field(
-                    name="Completeness",
-                    value=f"{sub['completeness_pct']:.0f}%",
-                    inline=True,
-                )
-                missing = []
-                if not sub.get("repo_url"):
-                    missing.append("repo_url")
-                if not sub.get("demo_url"):
-                    missing.append("demo_url")
-                if not sub.get("description"):
-                    missing.append("description")
-                if not sub.get("readme_url"):
-                    missing.append("readme_url")
-                if missing:
+            # Submission completeness — bot acts as organizer, so use the
+            # organizer list endpoint and filter by team id.
+            subs = await api_request("GET", "/submissions")
+            if isinstance(subs, list):
+                sub = next((s for s in subs if s.get("team_id") == str(team_id)), None)
+                if sub and "completeness_pct" in sub:
                     embed.add_field(
-                        name="Missing Fields",
-                        value=", ".join(missing),
-                        inline=False,
+                        name="Completeness",
+                        value=f"{sub['completeness_pct']:.0f}%",
+                        inline=True,
                     )
+                    missing = []
+                    if not sub.get("repo_url"):
+                        missing.append("repo_url")
+                    if not sub.get("demo_url"):
+                        missing.append("demo_url")
+                    if not sub.get("description"):
+                        missing.append("description")
+                    if not sub.get("readme_url"):
+                        missing.append("readme_url")
+                    if missing:
+                        embed.add_field(
+                            name="Missing Fields",
+                            value=", ".join(missing),
+                            inline=False,
+                        )
 
             await ctx.reply(embed=embed, mention_author=False)
         else:
@@ -417,30 +481,24 @@ async def escalations_command(ctx: commands.Context):
 
 @bot.command(name="mentor", help="Request mentor allocation for an issue")
 async def mentor_command(ctx: commands.Context, issue_id: str):
-    """Request a mentor for an issue."""
-    async with ctx.typing():
-        result = await api_request("POST", "/mentor-allocations", json_data={
-            "issue_id": issue_id,
-        })
+    """Request a mentor for an issue (via the participant portal).
 
-        if isinstance(result, dict) and "id" in result:
-            embed = discord.Embed(
-                title="Mentor Requested",
-                description=f"A mentor has been proposed for your issue.",
-                color=config.COLOR_SUCCESS,
-            )
-            embed.add_field(name="Allocation ID", value=str(result["id"])[:8], inline=True)
-            embed.add_field(name="Status", value=result.get("status", "proposed"), inline=True)
-            if result.get("mentor"):
-                embed.add_field(
-                    name="Mentor",
-                    value=result["mentor"].get("name", "Unknown"),
-                    inline=True,
-                )
-            await ctx.reply(embed=embed, mention_author=False)
-        else:
-            error_msg = result.get("detail", "Unknown error") if isinstance(result, dict) else str(result)
-            await ctx.reply(f" Failed to request mentor: {error_msg}", mention_author=False)
+    Mentor allocations are participant-scoped in the backend, so they can't
+    be created with the bot's organizer credential. We guide the user to the
+    portal instead of silently failing.
+    """
+    embed = discord.Embed(
+        title="Mentor Allocation",
+        description=(
+            "Mentor requests are handled in the participant portal "
+            "(or automatically when you report an issue). "
+            f"Report the problem with `{config.COMMAND_PREFIX}issue <description>` "
+            "and the Pulse agent will propose a matching mentor."
+        ),
+        color=config.COLOR_INFO,
+    )
+    embed.add_field(name="Issue ID provided", value=issue_id[:32], inline=False)
+    await ctx.reply(embed=embed, mention_author=False)
 
 
 # ─── Notification Delivery Loop ───────────────────────────
@@ -464,13 +522,8 @@ async def notification_loop():
             if not recipient_id or not content:
                 continue
 
-            # Find the Discord user by participant ID
-            participant = await api_request("GET", f"/participants/{recipient_id}")
-
-            if not isinstance(participant, dict):
-                continue
-
-            discord_handle = participant.get("discord_handle")
+            # Use participant info already included in the pending response
+            discord_handle = notif.get("discord_handle")
             if not discord_handle:
                 continue
 

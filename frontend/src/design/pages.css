@@ -1,0 +1,606 @@
+/* ═══════════════════════════════════════════════════════════
+   HackOps Page-Specific Styles
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Dashboard Page ──────────────────────────────────────── */
+.dash-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+@media (max-width: 1200px) {
+  .dash-kpi-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .dash-kpi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.dash-sections {
+  display: grid;
+  gap: var(--sp-6);
+}
+
+/* ── Feed / Activity Feed ────────────────────────────────── */
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.feed-item {
+  display: flex;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  background: var(--bg-base);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.feed-item-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.feed-item-icon.action { background: var(--info-muted); color: var(--info); }
+.feed-item-icon.escalation { background: var(--error-muted); color: var(--error); }
+.feed-item-icon.notification { background: var(--primary-muted); color: var(--primary); }
+.feed-item-icon.success { background: var(--success-muted); color: var(--success); }
+
+.feed-item-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.feed-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+}
+
+.feed-item-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--text-primary);
+}
+
+.feed-item-time {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.feed-item-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+}
+
+.feed-item-meta {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+/* ── Resource Card ───────────────────────────────────────── */
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--sp-3);
+}
+
+.resource-card {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-4);
+}
+
+.resource-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+
+.resource-card-name {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+
+.resource-card-qty {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-2);
+}
+
+.resource-qty-available {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--success);
+}
+
+.resource-qty-sep {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.resource-qty-total {
+  font-size: var(--text-md);
+  color: var(--text-muted);
+}
+
+.resource-card-type {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-bottom: var(--sp-3);
+}
+
+/* ── Chat Page ───────────────────────────────────────────── */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - var(--topbar-height) - var(--sp-12));
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.chat-msg {
+  display: flex;
+  gap: var(--sp-3);
+  max-width: 85%;
+}
+
+.chat-msg-user {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.chat-msg-bot {
+  align-self: flex-start;
+}
+
+.chat-msg-bubble {
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.chat-msg-bot .chat-msg-bubble {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.chat-msg-user .chat-msg-bubble {
+  background: var(--primary);
+  color: white;
+}
+
+.chat-msg-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-1);
+}
+
+.chat-msg-user .chat-msg-meta {
+  text-align: right;
+}
+
+.chat-citations {
+  margin-top: var(--sp-2);
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-base);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--primary);
+}
+
+.chat-citation-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--sp-1);
+}
+
+.chat-citation-item {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  padding: var(--sp-1) 0;
+}
+
+.chat-input-bar {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+
+.chat-input-bar .form-input {
+  flex: 1;
+}
+
+/* ── Participant Team Page ───────────────────────────────── */
+.team-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-6);
+}
+
+@media (max-width: 768px) {
+  .team-overview { grid-template-columns: 1fr; }
+}
+
+.team-info-grid {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.team-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-sm);
+}
+
+.team-info-label {
+  color: var(--text-muted);
+}
+
+.team-info-value {
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+  text-align: right;
+}
+
+.team-info-value a {
+  color: var(--primary);
+}
+
+/* ── Issue List ──────────────────────────────────────────── */
+.issue-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.issue-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: border-color var(--transition-fast);
+}
+
+.issue-item:hover {
+  border-color: var(--border-default);
+}
+
+.issue-severity {
+  width: 4px;
+  min-height: 40px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.issue-severity.high { background: var(--error); }
+.issue-severity.medium { background: var(--warning); }
+.issue-severity.low { background: var(--success); }
+
+.issue-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.issue-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+}
+
+.issue-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  margin-bottom: var(--sp-2);
+}
+
+.issue-meta {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+/* ── Escalation Queue ────────────────────────────────────── */
+.escalation-item {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  border-left: 3px solid var(--error);
+}
+
+.escalation-urgency {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-1);
+  min-width: 60px;
+}
+
+.escalation-urgency-value {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+}
+
+.escalation-urgency-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.escalation-body {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Agent Action Card ───────────────────────────────────── */
+.action-card {
+  padding: var(--sp-4);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.action-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--sp-3);
+}
+
+.action-card-type {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+}
+
+.action-card-desc {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--sp-3);
+  line-height: var(--leading-normal);
+}
+
+.setup-block {
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.setup-block:last-child {
+  border-bottom: none;
+}
+
+.action-card-summary {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--weight-medium);
+  margin-bottom: 6px;
+}
+
+.action-card-details {
+  margin: 4px 0;
+}
+
+.action-card-details summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.action-card-reasoning {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding: var(--sp-3);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--sp-3);
+}
+
+.action-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+/* ── Match Card ──────────────────────────────────────────── */
+.match-card {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-4);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.match-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 70px;
+  padding: var(--sp-3);
+  background: var(--success-muted);
+  border-radius: var(--radius-lg);
+}
+
+.match-score-value {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  color: var(--success);
+}
+
+.match-score-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+.match-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.match-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  margin-top: var(--sp-2);
+}
+
+.match-reasoning {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--sp-2);
+  font-style: italic;
+}
+
+/* ── Notification List ───────────────────────────────────── */
+.notification-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.notification-item:hover {
+  background: var(--bg-elevated);
+}
+
+.notification-item.unread {
+  border-left: 3px solid var(--primary);
+}
+
+.notification-item.read {
+  opacity: 0.7;
+}
+
+/* ── Skeletons ───────────────────────────────────────────── */
+.skeleton-card {
+  padding: var(--sp-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+.skeleton-line {
+  height: 12px;
+  margin-bottom: var(--sp-3);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton-line:last-child {
+  margin-bottom: 0;
+}
+
+.skeleton-line.w-1\/3 { width: 33%; }
+.skeleton-line.w-1\/2 { width: 50%; }
+.skeleton-line.w-2\/3 { width: 66%; }
+.skeleton-line.w-full { width: 100%; }
+
+/* ── Submission Checklist ────────────────────────────────── */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+.checklist-item.pass {
+  color: var(--success);
+}
+
+.checklist-item.fail {
+  color: var(--error);
+}
+
+.checklist-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.checklist-item.pass .checklist-icon {
+  background: var(--success-muted);
+  color: var(--success);
+}
+
+.checklist-item.fail .checklist-icon {
+  background: var(--error-muted);
+  color: var(--error);
+}

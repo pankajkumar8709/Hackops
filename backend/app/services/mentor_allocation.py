@@ -60,8 +60,8 @@ def _classify_skills_llm(issue_description: str) -> list[str]:
             logger.info("No Groq API key, using keyword fallback")
             return fallback
 
-        # Use httpx with timeout for fast failure (1s — LLM is enhancement, not blocker)
-        with _httpx.Client(timeout=1.0) as client:
+        # Use httpx with timeout for fast failure (5s — LLM is enhancement, not blocker)
+        with _httpx.Client(timeout=5.0) as client:
             response = client.post(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={
@@ -87,7 +87,7 @@ def _classify_skills_llm(issue_description: str) -> list[str]:
                         },
                     ],
                     "temperature": 0.1,
-                    "max_tokens": 100,
+                    "max_tokens": 300,
                 },
             )
 
@@ -100,6 +100,11 @@ def _classify_skills_llm(issue_description: str) -> list[str]:
 
             # Strip <think>...</think> tags (qwen3 model quirk)
             raw = re.sub(r"<think>[\s\S]*?</think>", "", raw).strip()
+
+            # Also try to extract JSON array from the response
+            json_match = re.search(r'\[[\s\S]*?\]', raw)
+            if json_match:
+                raw = json_match.group()
 
             # Parse JSON array
             skills = json.loads(raw)

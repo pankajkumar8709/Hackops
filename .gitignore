@@ -12,8 +12,6 @@ build/
 .env
 *.env.local
 
-# Alembic
-backend/alembic/versions/*.py
 
 # Node
 node_modules/

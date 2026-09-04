@@ -27,6 +27,8 @@ class AgentAction(Base):
     policy_check_result: Mapped[str | None] = mapped_column(String(100), nullable=True)
     # Outcome of the action
     outcome: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # Plain-language one-line summary for the dashboard feed / bot output
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     # Nullable FKs — points to whichever entity this action touched
     issue_id: Mapped[uuid.UUID | None] = mapped_column(

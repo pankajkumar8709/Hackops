@@ -22,6 +22,7 @@ class Participant(Base):
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    password_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     token_hash: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     skills: Mapped[list[str]] = mapped_column(ARRAY(String), nullable=False, default=list)
     track_pref: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)

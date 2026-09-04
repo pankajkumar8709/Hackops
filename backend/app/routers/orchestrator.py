@@ -159,9 +159,9 @@ async def orchestrator_status(
     db: AsyncSession = Depends(get_db),
 ):
     """Orchestrator health check and configuration info."""
-    # Count recent actions
-    result = await db.execute(select(AgentAction))
-    total_actions = len(result.scalars().all())
+    # Count recent actions using efficient COUNT query
+    from sqlalchemy import func
+    total_actions = (await db.execute(select(func.count()).select_from(AgentAction))).scalar() or 0
 
     return {
         "status": "operational",

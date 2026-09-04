@@ -15,6 +15,15 @@ class Settings(BaseSettings):
     jwt_algorithm: str = "HS256"
     jwt_expire_minutes: int = 1440
     frontend_origin: str = "http://localhost:5173"
+    # Organizer login — env-driven so no credential lives in source
+    organizer_username: str = "organizer"
+    organizer_password: str = ""
+    # Autonomous-loop scheduler (Phase 1.5 hardening)
+    scheduler_enabled: bool = True
+    sweep_interval_minutes: int = 5
+    reminder_interval_minutes: int = 5
+    mentor_timeout_interval_minutes: int = 2
+    resource_overdue_interval_minutes: int = 10
 
     class Config:
         env_file = str(_ENV_FILE)

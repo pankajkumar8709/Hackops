@@ -1,0 +1,8 @@
+HackOps 2026 Official Rules
+Submission Deadline: The final submission deadline is 5:00 PM on the last day.
+All teams must submit via the participant portal before the deadline.
+Teams must include a GitHub repository URL, a working demo URL, and a description.
+Late submissions receive a 10% penalty per hour.
+The maximum team size is 4 members. AI-generated code must be disclosed in the README.
+Prizes: First place wins $5000, second place $2500, third place $1000.
+Judging criteria: 40% technical difficulty, 30% innovation, 30% presentation.

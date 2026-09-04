@@ -153,6 +153,9 @@ async def ingest_document(db: AsyncSession, doc_id: uuid.UUID) -> int:
 
     if not sanitized:
         logger.warning("Document %s produced 0 usable chunks", doc_id)
+        doc.ingestion_status = "failed"
+        doc.error = "No usable text extracted from the document"
+        await db.commit()
         return 0
 
     embeddings = embed_texts(sanitized)
@@ -168,6 +171,8 @@ async def ingest_document(db: AsyncSession, doc_id: uuid.UUID) -> int:
     ]
     db.add_all(rules)
 
+    doc.chunk_count = len(rules)
+    doc.ingestion_status = "ready"
     doc.ingested_at = datetime.now(timezone.utc)
     await db.commit()
 

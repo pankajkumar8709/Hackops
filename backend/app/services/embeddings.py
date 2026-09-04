@@ -1,13 +1,15 @@
 """Embedding service — lazy-loaded SentenceTransformer singleton.
 
 Uses the all-MiniLM-L6-v2 model (384-dim) configured in settings.
+
+The heavy `sentence_transformers` import (which pulls in torch, ~10s+) is
+itself deferred until the first embedding is actually needed, so importing
+the app stays fast and the cost is only paid when a document is ingested.
 """
 from __future__ import annotations
 
 import logging
 from functools import lru_cache
-
-from sentence_transformers import SentenceTransformer
 
 from app.config import get_settings
 
@@ -15,8 +17,10 @@ logger = logging.getLogger(__name__)
 
 
 @lru_cache(maxsize=1)
-def _load_model() -> SentenceTransformer:
-    """Load and cache the embedding model (one-time cost ~200 MB)."""
+def _load_model():
+    """Import torch lazily, then load and cache the embedding model."""
+    from sentence_transformers import SentenceTransformer  # heavy import
+
     model_name = get_settings().embedding_model
     logger.info("Loading embedding model: %s", model_name)
     return SentenceTransformer(model_name)
